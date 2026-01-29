@@ -6,27 +6,18 @@
     <VerticalStackLayout
         Padding="30,0"
         Spacing="35">
-        <Label 
-            Text="Food Log"
-            TextColor="Black"
-            Style="{StaticResource Headline}"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center"/>
         <Label
             Text="Intake for this week"
-            TextColor="Black"
-            Style="{StaticResource SubHeadline}"
+            Style="{StaticResource Headline}"
             HorizontalTextAlignment="Start"
             HorizontalOptions="Start"/>
         <Label
             Text="Macronutrients Today"
-            TextColor="Black"
-            Style="{StaticResource SubHeadline}"
+            Style="{StaticResource Headline}"
             HorizontalTextAlignment="Start"
             HorizontalOptions="Start"/>
         <Label
             Text="Notes"
-            TextColor="Black"
             Style="{StaticResource SubHeadline}"
             HorizontalTextAlignment="Start"
             HorizontalOptions="Start"/>

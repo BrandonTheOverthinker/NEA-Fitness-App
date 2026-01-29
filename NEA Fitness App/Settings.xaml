@@ -4,10 +4,6 @@
              x:Class="NEA_Fitness_App.Settings"
              Title="Settings">
     <VerticalStackLayout>
-        <Label 
-            Text="Settings"
-            Style="{StaticResource Headline}"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+        
     </VerticalStackLayout>
 </ContentPage>

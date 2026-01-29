@@ -11,15 +11,13 @@
             <Grid ColumnDefinitions="*,*">
                 <Label
                     Text="Today's Summary"
-                    TextColor="Black"
                     Style="{StaticResource Headline}"
                     SemanticProperties.HeadingLevel="Level1" 
                     HorizontalTextAlignment="Start"
                     HorizontalOptions="Start"
                     Grid.Column="0"/>
                 <Label
-                    Text="Current XP" 
-                    TextColor="Black"
+                    Text="Current XP"
                     FontSize="Micro"
                     HorizontalTextAlignment="Center"
                     HorizontalOptions="Center"
@@ -29,20 +27,17 @@
             <Grid ColumnDefinitions="*,*">
                 <Label
                     Text="Macronutrients"
-                    TextColor="Black"
                     Style="{StaticResource SubHeadline}"
                     SemanticProperties.HeadingLevel="Level2"
                     Grid.Column="0"/>
                 <Label
                     Text="Goal Progress"
-                    TextColor="Black"
                     Style="{StaticResource SubHeadline}"
                     SemanticProperties.HeadingLevel="Level2"
                     Grid.Column="1"/>
             </Grid>
             <Label
                 Text="Weekly Workout Summary"
-                TextColor="Black"
                 Style="{StaticResource SubHeadline}"
                 SemanticProperties.HeadingLevel="Level2"
                 HorizontalTextAlignment="Start"
