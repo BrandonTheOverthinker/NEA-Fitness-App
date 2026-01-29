@@ -64,4 +64,40 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Update="FoodLog.xaml.cs">
+	    <DependentUpon>FoodLog.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Analytics.xaml.cs">
+	    <DependentUpon>Analytics.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Goals.xaml.cs">
+	    <DependentUpon>Goals.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="WorkoutLog.xaml.cs">
+	    <DependentUpon>WorkoutLog.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Settings.xaml.cs">
+	    <DependentUpon>Settings.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="FoodLog.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Analytics.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Goals.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="WorkoutLog.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Settings.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
 </Project>

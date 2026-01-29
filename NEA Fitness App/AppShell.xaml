@@ -11,5 +11,25 @@
         Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
+    <ShellContent
+        Title="Food Log"
+        ContentTemplate="{DataTemplate local:FoodLog}"
+        Route="FoodLog" />
+    <ShellContent
+        Title="Workout Log"
+        ContentTemplate="{DataTemplate local:WorkoutLog}"
+        Route="WorkoutLog" />
+    <ShellContent
+        Title="Analytics"
+        ContentTemplate="{DataTemplate local:Analytics}"
+        Route="Analytics" />
+    <ShellContent
+        Title="Goals"
+        ContentTemplate="{DataTemplate local:Goals}"
+        Route="Goals" />
+    <ShellContent
+        Title="Settings"
+        ContentTemplate="{DataTemplate local:Settings}"
+        Route="Settings" />
 
 </Shell>
