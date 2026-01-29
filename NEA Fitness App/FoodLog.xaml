@@ -3,11 +3,32 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NEA_Fitness_App.FoodLog"
              Title="Food Log">
-    <VerticalStackLayout>
+    <VerticalStackLayout
+        Padding="30,0"
+        Spacing="35">
         <Label 
             Text="Food Log"
+            TextColor="Black"
             Style="{StaticResource Headline}"
             VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+            HorizontalOptions="Center"/>
+        <Label
+            Text="Intake for this week"
+            TextColor="Black"
+            Style="{StaticResource SubHeadline}"
+            HorizontalTextAlignment="Start"
+            HorizontalOptions="Start"/>
+        <Label
+            Text="Macronutrients Today"
+            TextColor="Black"
+            Style="{StaticResource SubHeadline}"
+            HorizontalTextAlignment="Start"
+            HorizontalOptions="Start"/>
+        <Label
+            Text="Notes"
+            TextColor="Black"
+            Style="{StaticResource SubHeadline}"
+            HorizontalTextAlignment="Start"
+            HorizontalOptions="Start"/>
     </VerticalStackLayout>
 </ContentPage>
