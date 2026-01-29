@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:NEA_Fitness_App"
     Shell.FlyoutBehavior="Flyout"
     Title="NEA_Fitness_App">
-
+    
     <ShellContent
         Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
