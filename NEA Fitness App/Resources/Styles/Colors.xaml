@@ -17,7 +17,7 @@
     <Color x:Key="PrimaryDarkText">#41c146</Color>
     <Color x:Key="Secondary">#41c146</Color>
     <Color x:Key="SecondaryDarkText">#41c146</Color>
-    <Color x:Key="Tertiary">#41c146</Color> <!-- Replaced all pre-existing variables with the intended text ccolor, as to avoid rewriting code in Styles.xaml-->
+    <Color x:Key="Tertiary">#41c146</Color> <!-- Replaced all pre-existing variables with the intended text color, as to avoid rewriting code in Styles.xaml-->
 
     <Color x:Key="White">White</Color>
     <Color x:Key="Black">Black</Color>
