@@ -4,10 +4,6 @@
              x:Class="NEA_Fitness_App.Goals"
              Title="Goals">
     <VerticalStackLayout>
-        <Label 
-            Text="Goals"
-            Style="{StaticResource Headline}"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+        
     </VerticalStackLayout>
 </ContentPage>
