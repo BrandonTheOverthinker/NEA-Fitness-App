@@ -3,7 +3,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NEA_Fitness_App.Goals"
              Title="Goals">
-    <VerticalStackLayout>
-        
+    <VerticalStackLayout
+        Padding="30,0"
+        Spacing="35">
+        <Label 
+            Text="Target Body Weight"
+            Style="{StaticResource Headline}" />
+        <Label
+            Text="Target Macronutrients"
+            Style="{StaticResource SubHeadline}" />
+        <Label 
+            Text="Target PRs"
+            Style="{StaticResource Headline}" />
     </VerticalStackLayout>
 </ContentPage>
