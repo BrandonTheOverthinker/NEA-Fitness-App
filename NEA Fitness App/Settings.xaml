@@ -3,7 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NEA_Fitness_App.Settings"
              Title="Settings">
-    <VerticalStackLayout>
-        
+    <VerticalStackLayout
+        Padding="30,0"
+        Spacing="35">
+        <Button
+            Text="Visual Preferences" />
+        <Button
+            Text="Account" />
     </VerticalStackLayout>
 </ContentPage>
