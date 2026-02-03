@@ -3,7 +3,34 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NEA_Fitness_App.Analytics"
              Title="Analytics">
-    <VerticalStackLayout>
-        
+    <VerticalStackLayout
+        Padding="30,0"
+        Spacing="35">
+        <Label 
+            Text="Workout Stats"
+            Style="{StaticResource Headline}" />
+        <Label 
+            Text="Macronutrient Stats"
+            Style="{StaticResource Headline}" />
+        <Label 
+            Text="Goal Progress"
+            Style="{StaticResource Headline}" />
+        <Grid ColumnDefinitions="*,*,*">
+            <Label
+                Text="Body Weight Goal"
+                Style="{StaticResource SubHeadline}"
+                SemanticProperties.HeadingLevel="Level2"
+                Grid.Column="0"/>
+            <Label
+                Text="Nutrition Goal"
+                Style="{StaticResource SubHeadline}"
+                SemanticProperties.HeadingLevel="Level2"
+                Grid.Column="1"/>
+            <Label
+                Text="Exercise Goal"
+                Style="{StaticResource SubHeadline}"
+                SemanticProperties.HeadingLevel="Level2"
+                Grid.Column="2"/>
+        </Grid>
     </VerticalStackLayout>
 </ContentPage>
