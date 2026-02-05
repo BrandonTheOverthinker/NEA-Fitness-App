@@ -2,15 +2,20 @@ using FitnessAppBackend.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddControllers();
 
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new Exception("JSON READ FAILED: The connection string is null!");
+}
+
 builder.Services.AddDbContext<AppDbContext>
-    (options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+    (options => options.UseSqlServer(connectionString));
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 
