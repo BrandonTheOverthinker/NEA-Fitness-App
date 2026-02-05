@@ -23,19 +23,15 @@ namespace FitnessAppBackend.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-            // Basic validation
             if (string.IsNullOrWhiteSpace(request.UserName) || request.UserName.Length > 50)
                 return BadRequest("Username is required and must be <= 50 characters.");
-
             if (string.IsNullOrWhiteSpace(request.Password) || request.Password.Length < 8)
                 return BadRequest("Password must be at least 8 characters.");
 
-            // Check username uniqueness
             bool exists = await _db.Users.AnyAsync(u => u.UserName == request.UserName);
             if (exists)
                 return Conflict("Username already exists.");
 
-            // Create user + hash password
             var user = new User
             {
                 UserName = request.UserName
@@ -46,8 +42,7 @@ namespace FitnessAppBackend.Controllers
             _db.Users.Add(user);
             await _db.SaveChangesAsync();
 
-            // Return minimal safe response
-            return Created("", new { user.UserID, user.UserName });
+            return Created("", new { user.UserID, user.UserName }); // Return minimal safe response
         }
 
         [HttpGet("test-db")]
