@@ -11,7 +11,7 @@ namespace FitnessAppBackend.Controllers
     public class AuthController : ControllerBase
     {
         private readonly AppDbContext _db;
-        private readonly PasswordHasher<User> _hasher = new();
+        private readonly PasswordHasher<FitnessAppBackend.Models.User> _hasher = new();
 
         public AuthController(AppDbContext db)
         {

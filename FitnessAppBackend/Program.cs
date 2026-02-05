@@ -1,4 +1,4 @@
-using FitnessApp.Backend.Data;
+using FitnessAppBackend.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
