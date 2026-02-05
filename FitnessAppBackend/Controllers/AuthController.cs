@@ -1,4 +1,4 @@
-﻿using FitnessApp.Backend.Data;
+﻿using FitnessAppBackend.Data;
 using FitnessAppBackend.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
