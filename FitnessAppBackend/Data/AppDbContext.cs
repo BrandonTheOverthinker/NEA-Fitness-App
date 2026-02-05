@@ -25,5 +25,12 @@ namespace FitnessAppBackend.Data
         //public DBSet<ExerciseGoal> ExerciseGoals => Set<ExerciseGoal>();
         //public DbSet<WeightGoal> WeightGoals => Set<WeightGoal>();
         //public DbSet<NutritionGoals> NutritionGoals => Set<NutritionGoal>();
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // This tells EF: "Even if I call it 'Users' in C#, the SQL table is actually 'User'"
+            modelBuilder.Entity<User>().ToTable("User");
+
+            
+        }
     }
 }
