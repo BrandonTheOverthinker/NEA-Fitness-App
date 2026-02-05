@@ -1,19 +1,78 @@
 namespace NEA_Fitness_App;
 
+using System.Linq.Expressions;
+using System.Net.Http.Json;
+using NEA_Fitness_App.Models; // Access to RegisterRequest.cs
+
 public partial class LoginWindow : ContentPage
 {
 	public LoginWindow()
 	{
 		InitializeComponent();
 	}
-    private void OnLoginClicked(object sender, EventArgs e)
+    private async void OnLoginClicked(object sender, EventArgs e)
     {
-        // TODO: Connect to database and validate login credentials
+        if (string.IsNullOrWhiteSpace(UsernameEntry.Text) || string.IsNullOrWhiteSpace(PasswordEntry.Text))
+        {
+            await DisplayAlert("Error", "Please enter username and password", "OK");
+            return;
+        }
 
-        Application.Current.OpenWindow(new Window(new AppShell())); // Opens the Home Page
+        var loginData = new RegisterRequest
+        {
+            UserName = UsernameEntry.Text,
+            Password = PasswordEntry.Text
+        };
+
+        using var client = new HttpClient();
+
+        string url = "https://localhost:7281/api/auth/login";
+
+        try
+        {
+            var response = await client.PostAsJsonAsync(url, loginData);
+            Application.Current.OpenWindow(new Window(new AppShell())); // Opens the Home Page
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Connection Error", "Is the backend running? " + ex.Message, "OK");
+        }
+
+        
 
         var currentWindow = this.Window;
         if (currentWindow != null)
             Application.Current.CloseWindow(currentWindow);
+    }
+
+    private async void OnRegisterClicked(object sender, EventArgs e)
+    {
+        var registerData = new RegisterRequest
+        {
+            UserName = UsernameEntry.Text,
+            Password = PasswordEntry.Text
+        };
+
+        using var client = new HttpClient();
+
+        string url = "https://localhost:7281/api/auth/register";
+
+        try
+        {
+            var response = await client.PostAsJsonAsync(url, registerData);
+            if (response.IsSuccessStatusCode) // (if backend saved to DB)
+            {
+                await DisplayAlert("Success", "Account Created successfully", "OK");
+            }
+            else
+            {
+                string error = await response.Content.ReadAsStringAsync();
+                await DisplayAlert("Registration failed", error, "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Connection Error", "Is the backend running? " + ex.Message, "OK");
+        }
     }
 }
