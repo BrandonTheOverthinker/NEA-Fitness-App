@@ -1,10 +1,10 @@
 ﻿using FitnessApp.Backend.Data;
-using FitnessApp.Backend.Models;
+using FitnessAppBackend.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FitnessApp.Backend.Controllers
+namespace FitnessAppBackend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
