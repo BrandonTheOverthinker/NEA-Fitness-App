@@ -45,6 +45,18 @@ namespace FitnessAppBackend.Controllers
             return Created("", new { user.UserID, user.UserName }); // Return minimal safe response
         }
 
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] RegisterRequest request)
+        {
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.UserName == request.UserName);
+            if (user == null)
+                return Unauthorized("Invalid Username.");
+            var result = _hasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
+            if (result == PasswordVerificationResult.Failed)
+                return Unauthorized("Invalid Password.");
+            return Ok(new { user.UserName });
+        }
+
         [HttpGet("test-db")]
         public async Task<IActionResult> TestDb()
         {

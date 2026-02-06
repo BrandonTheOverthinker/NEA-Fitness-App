@@ -12,17 +12,18 @@ public partial class LoginWindow : ContentPage
 	}
     private async void OnLoginClicked(object sender, EventArgs e)
     {
+
         if (string.IsNullOrWhiteSpace(UsernameEntry.Text) || string.IsNullOrWhiteSpace(PasswordEntry.Text))
         {
             await DisplayAlert("Error", "Please enter username and password", "OK");
             return;
         }
 
-        var loginData = new RegisterRequest
-        {
-            UserName = UsernameEntry.Text,
-            Password = PasswordEntry.Text
-        };
+            var loginData = new RegisterRequest
+            {
+                UserName = UsernameEntry.Text,
+                Password = PasswordEntry.Text
+            };
 
         using var client = new HttpClient();
 
@@ -31,18 +32,21 @@ public partial class LoginWindow : ContentPage
         try
         {
             var response = await client.PostAsJsonAsync(url, loginData);
-            Application.Current.OpenWindow(new Window(new AppShell())); // Opens the Home Page
+            if (response.IsSuccessStatusCode) // Only navigate to backend if credentials are correct
+            {
+                Application.Current.OpenWindow(new Window(new AppShell())); // Opens the Home Page
+                if (this.Window != null)
+                    Application.Current.CloseWindow(this.Window);
+            }
+            else // Backend denied login
+            {
+                await DisplayAlert("Login failed", "Invalid Username or Password.", "OK");
+            }
         }
         catch (Exception ex)
         {
             await DisplayAlert("Connection Error", "Is the backend running? " + ex.Message, "OK");
         }
-
-        
-
-        var currentWindow = this.Window;
-        if (currentWindow != null)
-            Application.Current.CloseWindow(currentWindow);
     }
 
     private async void OnRegisterClicked(object sender, EventArgs e)
@@ -75,4 +79,6 @@ public partial class LoginWindow : ContentPage
             await DisplayAlert("Connection Error", "Is the backend running? " + ex.Message, "OK");
         }
     }
+    
 }
+

@@ -27,6 +27,13 @@
             IsPassword="True" />
         <Button
             Text="Login"
-            Clicked="OnLoginClicked"/>
+            Clicked="OnLoginClicked" />
+        <Label
+            Text="Don't have an account? Type a username and password and click Register"
+            FontSize="Small"
+            HorizontalOptions="Center" />
+        <Button
+            Text="Register"
+            Clicked="OnRegisterClicked" />
     </VerticalStackLayout>
 </ContentPage>
