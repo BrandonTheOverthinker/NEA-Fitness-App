@@ -54,7 +54,7 @@ namespace FitnessAppBackend.Controllers
             var result = _hasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
             if (result == PasswordVerificationResult.Failed)
                 return Unauthorized("Invalid Password.");
-            return Ok(new { user.UserName });
+            return Ok(new { user.UserName, user.UserID });
         }
 
         [HttpGet("test-db")]
