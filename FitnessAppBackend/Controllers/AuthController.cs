@@ -57,7 +57,7 @@ namespace FitnessAppBackend.Controllers
             return Ok(new { user.UserName, user.UserID });
         }
 
-        [HttpGet("test-db")]
+        [HttpGet("fitness-app-db")]
         public async Task<IActionResult> TestDb()
         {
             var userCount = await _db.Users.CountAsync();
