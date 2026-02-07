@@ -1,6 +1,5 @@
 namespace NEA_Fitness_App;
 
-using System.Linq.Expressions;
 using System.Net.Http.Json;
 using NEA_Fitness_App.Models; // Access to RegisterRequest.cs
 
