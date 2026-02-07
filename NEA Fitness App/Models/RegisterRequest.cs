@@ -8,7 +8,7 @@ namespace NEA_Fitness_App.Models
 {
     public class RegisterRequest
     {
-        
+        public int UserID { get; set; } 
         public string UserName { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         
