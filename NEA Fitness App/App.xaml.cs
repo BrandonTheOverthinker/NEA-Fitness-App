@@ -1,4 +1,4 @@
-﻿namespace NEA_Fitness_App
+﻿namespace NEAFitnessApp
 {
     public partial class App : Application
     {

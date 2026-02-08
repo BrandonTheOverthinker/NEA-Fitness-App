@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace NEA_Fitness_App
+namespace NEAFitnessApp
 {
     public static class MauiProgram
     {

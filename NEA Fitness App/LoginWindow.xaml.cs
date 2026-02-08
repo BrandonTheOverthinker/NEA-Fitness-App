@@ -1,7 +1,7 @@
-namespace NEA_Fitness_App;
+namespace NEAFitnessApp;
 
 using System.Net.Http.Json;
-using NEA_Fitness_App.Models; // Access to RegisterRequest.cs
+using NEAFitnessApp.Models; // Access to RegisterRequest.cs
 
 public partial class LoginWindow : ContentPage
 {

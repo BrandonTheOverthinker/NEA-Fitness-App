@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NEA_Fitness_App", "NEA Fitness App\NEA_Fitness_App.csproj", "{7734C546-6E8B-4164-AB04-EB20D00D24A7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NEAFitnessApp", "NEA Fitness App\NEAFitnessApp.csproj", "{7734C546-6E8B-4164-AB04-EB20D00D24A7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitnessAppBackend", "FitnessAppBackend\FitnessAppBackend.csproj", "{755DA3B7-CEF8-45D5-8A71-25211407DB24}"
 EndProject
@@ -24,5 +24,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3CE9AF84-0494-45B9-B38E-CD96BC476C12}
 	EndGlobalSection
 EndGlobal
