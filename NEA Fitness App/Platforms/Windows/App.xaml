@@ -1,8 +1,8 @@
 ﻿<maui:MauiWinUIApplication
-    x:Class="NEA_Fitness_App.WinUI.App"
+    x:Class="NEAFitnessApp.WinUI.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:maui="using:Microsoft.Maui"
-    xmlns:local="using:NEA_Fitness_App.WinUI">
+    xmlns:local="using:NEAFitnessApp.WinUI">
 
 </maui:MauiWinUIApplication>

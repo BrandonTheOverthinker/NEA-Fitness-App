@@ -1,7 +1,7 @@
 ﻿using ObjCRuntime;
 using UIKit;
 
-namespace NEA_Fitness_App
+namespace NEAFitnessApp.Platforms.MacCatalyst
 {
     public class Program
     {

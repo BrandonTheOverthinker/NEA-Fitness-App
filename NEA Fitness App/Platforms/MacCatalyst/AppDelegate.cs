@@ -1,6 +1,6 @@
 ﻿using Foundation;
 
-namespace NEA_Fitness_App
+namespace NEAFitnessApp.Platforms.MacCatalyst
 {
     [Register("AppDelegate")]
     public class AppDelegate : MauiUIApplicationDelegate

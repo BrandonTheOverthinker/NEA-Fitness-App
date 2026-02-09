@@ -2,7 +2,7 @@ using System;
 using Microsoft.Maui;
 using Microsoft.Maui.Hosting;
 
-namespace NEA_Fitness_App
+namespace NEAFitnessApp
 {
     internal class Program : MauiApplication
     {

@@ -1,6 +1,6 @@
 ﻿using Foundation;
 
-namespace NEA_Fitness_App
+namespace NEAFitnessApp.Platforms.iOS
 {
     [Register("AppDelegate")]
     public class AppDelegate : MauiUIApplicationDelegate
