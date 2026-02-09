@@ -33,6 +33,16 @@ public partial class LoginWindow : ContentPage
             var response = await client.PostAsJsonAsync(url, loginData);
             if (response.IsSuccessStatusCode) // Only navigate to backend if credentials are correct
             {
+                if (Application.Current != null)
+                {
+                    Application.Current.OpenWindow(new Window(new AppShell())); // Opens the Home Page
+                    if (this.Window != null)
+                        Application.Current.CloseWindow(this.Window)
+                }
+                else
+                {
+                    await DisplayAlert("Error", "Application.Current is null. Unable to open a new window.", "OK");
+                }
                 Application.Current.OpenWindow(new Window(new AppShell())); // Opens the Home Page
                 if (this.Window != null)
                     Application.Current.CloseWindow(this.Window);
