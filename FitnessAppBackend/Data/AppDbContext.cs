@@ -9,28 +9,45 @@ namespace FitnessAppBackend.Data
 
         public DbSet<User> Users => Set<User>();
 
-        //public DbSet<Workout> Workouts => Set<Workout>();
-        //public DbSet<Exercise> Exercises => Set<Exercise>();
-        //public DbSet<ExerciseInfo> ExerciseInfo => Set<ExerciseInfo>();
-        //public DbSet<ExerciseLog> ExerciseLogs => Set<ExerciseLog>();
-        //public DBSet<UserExercise> UserExercises => Set<UserExercise>();
-        //public DbSet<Set> Sets => Set<Set>();
-        //public DbSet<UserPersonalRecord> PersonalRecords => Set<UserPersonalRecord>();
+        public DbSet<Exercise> Exercises => Set<Exercise>();
+        public DbSet<UserExercise> UserExercises => Set<UserExercise>();
+        public DbSet<Workout> Workouts => Set<Workout>();
+        public DbSet<Set> Sets => Set<Set>();
+        public DbSet<ExerciseLog> ExerciseLogs => Set<ExerciseLog>();
+        public DbSet<UserPersonalRecord> PersonalRecords => Set<UserPersonalRecord>();
 
-        //public DBSet<Food> Foods => Set<Food>();
-        //public DbSet<FoodLog> FoodLogs => Set<FoodLog>();
-        //public DbSet<Macronutrients> Macronutrients => Set<Macronutrients>();
+        public DbSet<Food> Foods => Set<Food>();
+        public DbSet<FoodLog> FoodLogs => Set<FoodLog>();
+        public DbSet<Macronutrients> Macronutrients => Set<Macronutrients>();
 
-        //public DBSet<UserGoal> Goals => Set<UserGoal>();
-        //public DBSet<ExerciseGoal> ExerciseGoals => Set<ExerciseGoal>();
-        //public DbSet<WeightGoal> WeightGoals => Set<WeightGoal>();
-        //public DbSet<NutritionGoals> NutritionGoals => Set<NutritionGoal>();
+        public DbSet<UserGoal> Goals => Set<UserGoal>();
+        public DbSet<ExerciseGoal> ExerciseGoals => Set<ExerciseGoal>();
+        public DbSet<WeightGoal> WeightGoals => Set<WeightGoal>();
+        public DbSet<NutritionGoal> NutritionGoals => Set<NutritionGoal>();
+
+        public DbSet<XPLevel> Level => Set<XPLevel>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // This tells EF: "Even if I call it 'Users' in C#, the SQL table is actually 'User'"
-            modelBuilder.Entity<User>().ToTable("User");
+            modelBuilder.Entity<User>().ToTable("User"); // Clarifies that even if I call it 'Users' in C#, the SQL Table is actually 'User'
 
-            
+            modelBuilder.Entity<Exercise>().ToTable("Exercise");
+            modelBuilder.Entity<UserExercise>().ToTable("UserExercise");
+            modelBuilder.Entity<Workout>().ToTable("Workout");
+            modelBuilder.Entity<Set>().ToTable("Set");
+            modelBuilder.Entity<ExerciseLog>().ToTable("ExerciseLog");
+            modelBuilder.Entity<UserPersonalRecord>().ToTable("UserPersonalRecord");
+
+            modelBuilder.Entity<Food>().ToTable("Food");
+            modelBuilder.Entity<FoodLog>().ToTable("FoodLog");
+            modelBuilder.Entity<Macronutrients>().ToTable("Macronutrients");
+
+            modelBuilder.Entity<UserGoal>().ToTable("UserGoal");
+            modelBuilder.Entity<ExerciseGoal>().ToTable("ExerciseGoal");
+            modelBuilder.Entity<WeightGoal>().ToTable("WeightGoal");
+            modelBuilder.Entity<NutritionGoal>().ToTable("NutritionGoal");
+
+            modelBuilder.Entity<XPLevel>().ToTable("XPLevel");
         }
     }
 }
