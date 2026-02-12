@@ -18,7 +18,7 @@ namespace FitnessAppBackend.Controllers
             _hasher = new PasswordHasher<User>();
         }
 
-        public record RegisterRequest(string UserName, string Password);
+        public record RegisterRequest(string UserName, string Password, DateOnly UserDOB, decimal BodyWeight, decimal Height);
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
@@ -32,9 +32,13 @@ namespace FitnessAppBackend.Controllers
             if (exists)
                 return Conflict("Username already exists.");
 
+            // Map new properties to the new User Table:
             var user = new User
             {
-                UserName = request.UserName
+                UserName = request.UserName,
+                UserDOB = request.UserDOB,
+                BodyWeight = request.BodyWeight,
+                Height = request.Height
             };
 
             user.PasswordHash = _hasher.HashPassword(user, request.Password);
