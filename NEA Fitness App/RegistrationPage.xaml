@@ -2,31 +2,61 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NEAFitnessApp.RegistrationPage"
-             Title="RegistrationPage">
+             Title="Create Account">
     <VerticalStackLayout
         Padding="30"
         Spacing="15">
-        <Label Text="Tell us about yourself" Style="{StaticResource Headline}" />
+        <Label
+            Text="Tell us about yourself"
+            Style="{StaticResource Headline}" />
 
-        <Entry x:Name="UsernameEntry" Placeholder="Username" />
-        <Entry x:Name="PasswordEntry" Placeholder="Password" IsPassword="True" />
+        <Entry
+            x:Name="UsernameEntry"
+            Placeholder="Username" />
+        <Entry
+            x:Name="PasswordEntry"
+            Placeholder="Password" IsPassword="True" />
 
         <Label Text="Date of Birth" />
-        <DatePicker x:Name="DobPicker" MaximumDate="2008-01-01" />
+        <DatePicker
+            x:Name="DobPicker"
+            MaximumDate="2008-01-01" />
 
         <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-            <Entry x:Name="WeightEntry" Grid.Column="0" Placeholder="Weight (kg)" Keyboard="Numeric" TextChanged="OnMetricsChanged" />
-            <Entry x:Name="HeightEntry" Grid.Column="1" Placeholder="Height (cm)" Keyboard="Numeric" TextChanged="OnMetricsChanged" />
+            <Entry
+                x:Name="WeightEntry"
+                Grid.Column="0"
+                Placeholder="Weight (kg)"
+                Keyboard="Numeric"
+                TextChanged="OnMetricsChanged" />
+            <Entry
+                x:Name="HeightEntry"
+                Grid.Column="1"
+                Placeholder="Height (cm)"
+                Keyboard="Numeric"
+                TextChanged="OnMetricsChanged" />
         </Grid>
 
         <Border BackgroundColor="#2D2D2D">
             <VerticalStackLayout HorizontalOptions="Center">
-                <Label Text="Calculated BMI" HorizontalOptions="Center" FontSize="Caption"/>
-                <Label x:Name="BmiDisplay" Text="0.0" FontSize="32" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center"/>
-                <Label x:Name="BmiCategory" Text="Enter details..." HorizontalOptions="Center" />
+                <Label 
+                    Text="Estimated BMI"
+                    HorizontalOptions="Center"
+                    FontSize="Caption"/>
+                <Label
+                    x:Name="BmiDisplay"
+                    Text="0.0"
+                    FontAttributes="Bold"
+                    HorizontalOptions="Center"/>
+                <Label
+                    x:Name="BmiCategory"
+                    Text="Enter details..."
+                    HorizontalOptions="Center" />
             </VerticalStackLayout>
         </Border>
-
-        <Button Text="Complete Registration" Clicked="OnFinalizeRegistrationClicked" BackgroundColor="#512BD4" />
+        
+        <Button
+            Text="Create Account"
+            Clicked="OnFinaliseRegistrationClicked" />
     </VerticalStackLayout>
 </ContentPage>
