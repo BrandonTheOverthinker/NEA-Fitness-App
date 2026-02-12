@@ -98,6 +98,9 @@
 	  <MauiXaml Update="LoginWindow.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="RegistrationPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="WorkoutLog.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

@@ -57,33 +57,35 @@ public partial class LoginWindow : ContentPage
 
     private async void OnRegisterClicked(object sender, EventArgs e)
     {
-        var registerData = new RegisterRequest
-        {
-            UserName = UsernameEntry.Text,
-            Password = PasswordEntry.Text
-        };
+        await Navigation.PushAsync(new RegistrationPage());
 
-        using var client = new HttpClient();
+        //var registerData = new RegisterRequest
+        //{
+        //    UserName = UsernameEntry.Text,
+        //    Password = PasswordEntry.Text
+        //};
 
-        string url = "https://localhost:7281/api/auth/register";
+        //using var client = new HttpClient();
 
-        try
-        {
-            var response = await client.PostAsJsonAsync(url, registerData);
-            if (response.IsSuccessStatusCode) // (if backend saved to DB)
-            {
-                await DisplayAlert("Success", "Account Created successfully", "OK");
-            }
-            else
-            {
-                string error = await response.Content.ReadAsStringAsync();
-                await DisplayAlert("Registration failed", error, "OK");
-            }
-        }
-        catch (Exception ex)
-        {
-            await DisplayAlert("Connection Error", "Is the backend running? " + ex.Message, "OK");
-        }
+        //string url = "https://localhost:7281/api/auth/register";
+
+        //try
+        //{
+        //    var response = await client.PostAsJsonAsync(url, registerData);
+        //    if (response.IsSuccessStatusCode) // (if backend saved to DB)
+        //    {
+        //        await DisplayAlert("Success", "Account Created successfully", "OK");
+        //    }
+        //    else
+        //    {
+        //        string error = await response.Content.ReadAsStringAsync();
+        //        await DisplayAlert("Registration failed", error, "OK");
+        //    }
+        //}
+        //catch (Exception ex)
+        //{
+        //    await DisplayAlert("Connection Error", "Is the backend running? " + ex.Message, "OK");
+        //}
     }
     
 }
