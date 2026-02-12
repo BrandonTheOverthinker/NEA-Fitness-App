@@ -10,3 +10,4 @@ namespace FitnessAppBackend.Interfaces
         Task<int> GetUserCountAsync();
     }
 }
+// completed
