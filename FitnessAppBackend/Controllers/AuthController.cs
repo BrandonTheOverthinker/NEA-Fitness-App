@@ -21,15 +21,15 @@ namespace FitnessAppBackend.Controllers
         public record RegisterRequest(string UserName, string Password, DateOnly UserDOB, decimal BodyWeight, decimal Height);
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+        public async Task<IActionResult> Register([FromBody] RegisterRequest request) // completed
         {
+            // Validation:
             if (string.IsNullOrWhiteSpace(request.UserName) || request.UserName.Length > 50)
                 return BadRequest("Username is required and must be <= 50 characters.");
             if (string.IsNullOrWhiteSpace(request.Password) || request.Password.Length < 8)
                 return BadRequest("Password must be at least 8 characters.");
 
-            bool exists = await _userRepo.UserExistsAsync(request.UserName);
-            if (exists)
+            if (await _userRepo.UserExistsAsync(request.UserName))
                 return Conflict("Username already exists.");
 
             // Map new properties to the new User Table:
@@ -40,11 +40,12 @@ namespace FitnessAppBackend.Controllers
                 BodyWeight = request.BodyWeight,
                 Height = request.Height
             };
-
+            
             user.PasswordHash = _hasher.HashPassword(user, request.Password);
 
+            // Save by using the Repository:
             await _userRepo.CreateUserAsync(user);
-            return Ok(new { user.UserName, user.UserID });
+            return Ok("-> User registered successfully.");
         }
 
         [HttpPost("login")]
@@ -56,7 +57,7 @@ namespace FitnessAppBackend.Controllers
             var result = _hasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
             if (result == PasswordVerificationResult.Failed)
                 return Unauthorized("Invalid Password.");
-            return Ok(new { user.UserName, user.UserID });
+            return Ok(new { user.UserName, user.UserID } + " -> User logged in successfully.");
         }
 
         [HttpGet("fitness-app-db")]
