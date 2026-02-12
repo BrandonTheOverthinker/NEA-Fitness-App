@@ -1,4 +1,8 @@
-﻿using FitnessAppBackend.Data;
+﻿// Only file which can talk to the SQL database, and is responsible for fetching and saving user data.
+// Implements the IUserRepository interface, which defines the contract for user-related operations
+// Uses Entity Framework Core to interact with the database, allowing for asynchronous operations to improve performance and responsiveness
+
+using FitnessAppBackend.Data;
 using FitnessAppBackend.Interfaces;
 using FitnessAppBackend.Models;
 using Microsoft.EntityFrameworkCore;
@@ -22,9 +26,9 @@ namespace FitnessAppBackend.Repositories
         public async Task<bool> UserExistsAsync(string username) =>
             await _context.Users.AnyAsync(u => u.UserName == username);
 
-        public async Task<int> GetUserCountAsync()
-        {
-            return await _context.Users.CountAsync();
-        }
+        public async Task<int> GetUserCountAsync() =>
+            await _context.Users.CountAsync();
+        
     }
 }
+// completed
