@@ -15,10 +15,10 @@ namespace FitnessAppBackend.Models
         public DateOnly UserDOB { get; set; }
 
         [MaxLength(5)]
-        public decimal BodyWeight { get; set; }
+        public decimal BodyWeight { get; set; } // KG
 
         [MaxLength(5)]
-        public decimal Height { get; set; }
+        public decimal Height { get; set; } // CM
     }
 
     public class Exercise
@@ -101,7 +101,7 @@ namespace FitnessAppBackend.Models
         public int ExerciseID { get; set; }
 
         [MaxLength(20)]
-        public string PRType { get; set; }
+        public string PRType { get; set; } = string.Empty;
 
         [MaxLength(10)]
         public decimal PRValue { get; set; }
@@ -118,7 +118,7 @@ namespace FitnessAppBackend.Models
         public int UserID { get; set; }
 
         [Required, MaxLength(50)]
-        public string FoodName { get; set; }
+        public string FoodName { get; set; } = string.Empty;
     }
     public class FoodLog
     {
