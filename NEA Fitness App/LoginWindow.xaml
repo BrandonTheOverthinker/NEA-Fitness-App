@@ -29,11 +29,11 @@
             Text="Login"
             Clicked="OnLoginClicked" />
         <Label
-            Text="Don't have an account? Type a username and password and click Register"
+            Text="Don't have an account?"
             FontSize="Small"
             HorizontalOptions="Center" />
         <Button
-            Text="Register"
+            Text="Create New Account"
             Clicked="OnRegisterClicked" />
     </VerticalStackLayout>
 </ContentPage>
