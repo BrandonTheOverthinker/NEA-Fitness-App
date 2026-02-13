@@ -14,7 +14,19 @@ namespace NEAFitnessApp
 			// Result Output and Store Value
 			if (decimal.TryParse(WeightEntry.Text, out decimal weight) && decimal.TryParse(HeightEntry.Text, out decimal height) && height > 0)
 			{
+				DobPicker.MaximumDate = DateTime.Today.AddYears(-18);
+				DobPicker.MinimumDate = DateTime.Today.AddYears(-120);
+				DateTime dob = DobPicker.Date;
+				DateTime today = DateTime.Today;
 
+				int age = today.Year - dob.Year;
+				if (dob > today.AddYears(-age)) // if birthday hasn't occurred this year
+					age--;
+				if (age < 18)
+				{
+					// error
+				}
+				
 			}
 		}
 
