@@ -19,8 +19,7 @@
 
         <Label Text="Date of Birth" />
         <DatePicker
-            x:Name="DobPicker"
-            MaximumDate="2008-01-01" />
+            x:Name="DobPicker" />
 
         <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
             <Entry
