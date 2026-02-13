@@ -75,7 +75,6 @@ namespace FitnessAppBackend.Models
 
         [MaxLength(3)]
         public decimal RPE { get; set; }
-        
     }
     public class ExerciseLog
     {
@@ -122,32 +121,116 @@ namespace FitnessAppBackend.Models
     }
     public class FoodLog
     {
+        public int FoodLogID { get; set; }
 
+        public int FoodID { get; set; }
+
+        public DateTime LogTime { get; set; }
+
+        [Required, MaxLength(7)]
+        public decimal Quantity { get; set; }
     }
     public class Macronutrients
     {
+        public int MacroID { get; set; }
 
+        public int FoodID { get; set; }
+
+        public int Calories { get; set; }
+
+        [Required, MaxLength(7)]
+        public decimal Protein { get; set; }
+
+        [Required, MaxLength(7)]
+        public decimal Fat { get; set; }
+
+        [Required, MaxLength(7)]
+        public decimal SaturatedFat { get; set; }
+
+        [Required, MaxLength(7)]
+        public decimal Carbohydrates { get; set; }
+
+        [Required, MaxLength(7)]
+        public decimal Sugar { get; set; }
+
+        [Required, MaxLength(7)]
+        public decimal Fibre { get; set; }
     }
 
     public class UserGoal
     {
+        public int GoalID { get; set; }
 
+        public int UserID { get; set; }
+
+        [Required, MaxLength(25)]
+        public string GoalType { get; set; } = string.Empty;
+
+        [Required, MaxLength(250)]
+        public string GoalDescription { get; set; } = string.Empty;
+
+        public DateTime DateCreated { get; set; }
+
+        public bool IsCompleted { get; set; }
     }
     public class ExerciseGoal
     {
+        public int EGoalID { get; set; }
+        
+        public int GoalID { get; set; }
 
+        public int ExerciseID { get; set; }
+
+        [Required, MaxLength(7)]
+        public decimal TargetWeight { get; set; }
+
+        public int TargetTime { get; set; }
     }
     public class WeightGoal
     {
+        public int WGoalID { get; set; }
 
+        public int GoalID { get; set; }
+
+        [Required, MaxLength (5)]
+        public decimal TargetBW { get; set; }
+
+        [Required, MaxLength(5)]
+        public decimal StartBW { get; set; }
     }
     public class NutritionGoal
     {
+        public int NGoalID { get; set; }
 
+        public int WGoalID { get; set; }
+
+        public int CalorieGoal { get; set; }
+
+        [Required, MaxLength(7)]
+        public decimal ProteinGoal { get; set; }
+
+        [Required, MaxLength(7)]
+        public decimal FatGoal { get; set; }
+
+        [Required, MaxLength(7)]
+        public decimal SaturatedFatGoal { get; set; }
+
+        [Required, MaxLength(7)]
+        public decimal CarbohydratesGoal { get; set; }
+
+        [Required, MaxLength(7)]
+        public decimal SugarGoal { get; set; }
+
+        [Required, MaxLength(7)]
+        public decimal FibreGoal { get; set; }
     }
 
     public class XPLevel
     {
+        public int TotalXP { get; set; }
 
+        public int UserID { get; set; }
+
+        public int Level { get; set; }
     }
 }
