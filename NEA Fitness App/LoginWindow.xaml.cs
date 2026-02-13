@@ -57,7 +57,18 @@ public partial class LoginWindow : ContentPage
 
     private async void OnRegisterClicked(object sender, EventArgs e)
     {
-        await Navigation.PushAsync(new RegistrationPage());
+        //await Navigation.PushAsync(new RegistrationPage());
+
+        if (Application.Current != null)
+        {
+            Application.Current.OpenWindow(new Window(new RegistrationPage())); // Opens the Home Page
+            if (this.Window != null)
+                Application.Current.CloseWindow(this.Window);
+        }
+        else
+        {
+            await DisplayAlert("Error", "Application.Current is null. Unable to open a new window.", "OK");
+        }
 
         //var registerData = new RegisterRequest
         //{
