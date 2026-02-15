@@ -18,7 +18,7 @@ namespace FitnessAppBackend.Controllers
             _hasher = new PasswordHasher<User>();
         }
 
-        public record RegisterRequest(string UserName, string Password, DateOnly UserDOB, decimal BodyWeight, decimal Height, string Gender, string ActivityLevel);
+        public record RegisterRequest(string UserName, string Password, DateOnly UserDOB, decimal BodyWeight, decimal Height, string Gender, string ActivityLevel, decimal MaintenanceGoal);
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request) // completed
@@ -40,7 +40,8 @@ namespace FitnessAppBackend.Controllers
                 BodyWeight = request.BodyWeight,
                 Height = request.Height,
                 Gender = request.Gender,
-                ActivityLevel = request.ActivityLevel
+                ActivityLevel = request.ActivityLevel,
+                MaintenanceGoal = request.MaintenanceGoal
             };
             
             user.PasswordHash = _hasher.HashPassword(user, request.Password);
@@ -59,7 +60,13 @@ namespace FitnessAppBackend.Controllers
             var result = _hasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
             if (result == PasswordVerificationResult.Failed)
                 return Unauthorized("Invalid Password.");
-            return Ok(new { user.UserName, user.UserID } + " -> User logged in successfully.");
+            return Ok(new
+            {
+                user.UserName,
+                user.UserID,
+                user.MaintenanceGoal,
+                Message = "User logged in successfully."
+            });
         }
 
         [HttpGet("fitness-app-db")]
