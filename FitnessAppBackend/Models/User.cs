@@ -29,5 +29,9 @@ namespace FitnessAppBackend.Models
 
         [Required, MaxLength(20)]
         public string ActivityLevel { get; set; } = "Sedentary";
+
+        [Required]
+        [Column(TypeName = "decimal(5,0)")]
+        public decimal MaintenanceGoal { get; set; }
     }
 }
