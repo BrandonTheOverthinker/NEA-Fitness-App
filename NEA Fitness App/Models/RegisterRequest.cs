@@ -8,6 +8,7 @@
         public DateOnly UserDOB { get; set; }
         public decimal BodyWeight { get; set; }
         public decimal Height { get; set; }
+        public string Gender { get; set; } = "Prefer not to say";
     }
 }
 // completed
