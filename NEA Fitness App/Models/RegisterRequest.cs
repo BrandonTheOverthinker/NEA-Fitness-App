@@ -8,8 +8,8 @@
         public DateOnly UserDOB { get; set; }
         public decimal BodyWeight { get; set; }
         public decimal Height { get; set; }
-        public string Gender { get; set; } = "Prefer not to say";
-        public string ActivityLevel { get; set; } = "Sedentary";
+        public string Gender { get; set; } = string.Empty;
+        public string ActivityLevel { get; set; } = string.Empty;
     }
 }
 // completed
