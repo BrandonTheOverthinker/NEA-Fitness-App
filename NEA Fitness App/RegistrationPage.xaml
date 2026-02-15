@@ -19,9 +19,10 @@
 
         <Label Text="Date of Birth" />
         <DatePicker
-            x:Name="DobPicker" />
+            x:Name="DobPicker"
+            DateSelected="OnMetricsChanged" />
 
-        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
             <Entry
                 x:Name="WeightEntry"
                 Grid.Column="0"
@@ -34,6 +35,16 @@
                 Placeholder="Height (cm)"
                 Keyboard="Numeric"
                 TextChanged="OnMetricsChanged" />
+            <Picker
+                x:Name="GenderPicker" 
+                Title="Select Gender" 
+                SelectedIndexChanged="OnMetricsChanged">
+                <Picker.Items>
+                    <x:String>Male</x:String>
+                    <x:String>Female</x:String>
+                    <x:String>Prefer not to say</x:String>
+                </Picker.Items>
+            </Picker>
         </Grid>
 
         <Border BackgroundColor="#2D2D2D">
