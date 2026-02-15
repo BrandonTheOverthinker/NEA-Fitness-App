@@ -1,5 +1,4 @@
 using System.Net.Http.Json;
-using System.Threading.Tasks;
 using NEAFitnessApp.Models;
 
 namespace NEAFitnessApp
@@ -26,7 +25,7 @@ namespace NEAFitnessApp
 					age--;
 				if (age < 18)
 				{
-                    BmiDisplay.Text = "Must be 18+ to calculate.";
+                    BmrDisplay.Text = "Must be 18+ to calculate.";
                     return;
                 }
 
@@ -36,7 +35,22 @@ namespace NEAFitnessApp
 				if (gender == "Male") bmr += 5;
 				else if (gender == "Female") bmr -= 161;
 
-				BmiDisplay.Text = $"{bmr:F0}"; // Round to 0 dp since fractions of calories aren't meaningful
+                string activity = ActivityPicker.SelectedItem?.ToString() ?? "Sedentary";
+
+                decimal multiplier = activity switch
+                {
+                    "BMR (Bedridden)" => 1.0m,
+                    "Sedentary" => 1.2m,
+                    "Lightly Active" => 1.375m,
+                    "Moderately Active" => 1.55m,
+                    "Very Active" => 1.725m,
+                    "Extremely Active" => 1.9m,
+                    _ => 1.0m // Default fallback
+                };
+
+                decimal maintenanceCalories = bmr * multiplier;
+
+                BmrDisplay.Text = $"{maintenanceCalories:F0}"; // Round to 0 dp since fractions of calories aren't meaningful
             }
 		}
 
@@ -48,16 +62,18 @@ namespace NEAFitnessApp
 				await DisplayAlert("Error", "Please fill in all fields.", "OK");
 				return;
 			}
-
-			var registerData = new RegisterRequest
+            string selectedGender = GenderPicker.SelectedItem?.ToString() ?? "Prefer not to say";
+            string selectedActivity = ActivityPicker.SelectedItem?.ToString() ?? "Sedentary";
+            var registerData = new RegisterRequest
 			{
 				UserName = UsernameEntry.Text,
 				Password = PasswordEntry.Text,
 				UserDOB = DateOnly.FromDateTime(DobPicker.Date),
 				BodyWeight = w,
 				Height = h,
-				Gender = GenderPicker.SelectedItem as string ?? "Prefer not to say"
-			};
+				Gender = selectedGender,
+				ActivityLevel = selectedActivity
+            };
 
 			using var client = new HttpClient();
 			string url = "https://localhost:7281/api/auth/register";
@@ -70,7 +86,7 @@ namespace NEAFitnessApp
 					// This block works like cache for the rest of the app,
 					// so that bmr can be remembered by the whole program without having to use the database:
                     Preferences.Default.Set("UserName", registerData.UserName);
-                    Preferences.Default.Set("UserBMR", BmiDisplay.Text);
+                    Preferences.Default.Set("UserBMR", BmrDisplay.Text);
 
 					await DisplayAlert("Welcome!", "Account Created Successfully.", "OK");
 					Application.Current.MainPage = new AppShell();
