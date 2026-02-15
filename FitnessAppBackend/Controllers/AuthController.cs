@@ -18,7 +18,7 @@ namespace FitnessAppBackend.Controllers
             _hasher = new PasswordHasher<User>();
         }
 
-        public record RegisterRequest(string UserName, string Password, DateOnly UserDOB, decimal BodyWeight, decimal Height);
+        public record RegisterRequest(string UserName, string Password, DateOnly UserDOB, decimal BodyWeight, decimal Height, string Gender, string ActivityLevel);
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request) // completed
@@ -38,7 +38,9 @@ namespace FitnessAppBackend.Controllers
                 UserName = request.UserName,
                 UserDOB = request.UserDOB,
                 BodyWeight = request.BodyWeight,
-                Height = request.Height
+                Height = request.Height,
+                Gender = request.Gender,
+                ActivityLevel = request.ActivityLevel
             };
             
             user.PasswordHash = _hasher.HashPassword(user, request.Password);
