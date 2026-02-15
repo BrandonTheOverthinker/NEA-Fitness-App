@@ -32,7 +32,8 @@ namespace FitnessAppBackend.Data
             modelBuilder.Entity<User>().ToTable("User"); // Clarifies that even if I call it 'Users' in C#, the SQL Table is actually 'User'
 
             modelBuilder.Entity<Exercise>().ToTable("Exercise");
-            modelBuilder.Entity<UserExercise>().ToTable("UserExercise");
+            modelBuilder.Entity<UserExercise>().ToTable("UserExercise")
+                .HasKey(ue => new { ue.UserID, ue.ExerciseID }); // Configure composite primary key for UserExercise
             modelBuilder.Entity<Workout>().ToTable("Workout");
             modelBuilder.Entity<Set>().ToTable("Set");
             modelBuilder.Entity<ExerciseLog>().ToTable("ExerciseLog");
@@ -42,12 +43,17 @@ namespace FitnessAppBackend.Data
             modelBuilder.Entity<FoodLog>().ToTable("FoodLog");
             modelBuilder.Entity<Macronutrients>().ToTable("Macronutrients");
 
-            modelBuilder.Entity<UserGoal>().ToTable("UserGoal");
+            modelBuilder.Entity<UserGoal>().ToTable("UserGoal")
+                .Property(ug => ug.IsCompleted)
+                .HasDefaultValue(false)
+                .ValueGeneratedOnAdd();
             modelBuilder.Entity<ExerciseGoal>().ToTable("ExerciseGoal");
             modelBuilder.Entity<WeightGoal>().ToTable("WeightGoal");
             modelBuilder.Entity<NutritionGoal>().ToTable("NutritionGoal");
 
             modelBuilder.Entity<XPLevel>().ToTable("XPLevel");
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
