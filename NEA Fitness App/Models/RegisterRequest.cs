@@ -10,6 +10,7 @@
         public decimal Height { get; set; }
         public string Gender { get; set; } = string.Empty;
         public string ActivityLevel { get; set; } = string.Empty;
+        public decimal MaintenanceGoal { get; set; }
     }
 }
 // completed
