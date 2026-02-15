@@ -4,7 +4,6 @@
              x:Class="NEAFitnessApp.MainPage">
 
     <ScrollView BackgroundColor="#212121">
-    
         <VerticalStackLayout
             Padding="30,0"
             Spacing="35">
@@ -17,26 +16,70 @@
                     HorizontalTextAlignment="Start"
                     HorizontalOptions="Start"
                     Grid.Column="0"/>
-                <Label
-                    Text="Current XP"
-                    FontSize="Micro"
-                    HorizontalTextAlignment="Center"
-                    HorizontalOptions="Center"
-                    Grid.Column="1"/>
+                <HorizontalStackLayout
+                    Grid.Column="1"
+                    HorizontalOptions="End"
+                    VerticalOptions="Center">
+                    <Label
+                        Text="XP: " />
+                    <Label
+                        x:Name="XpDisplay"
+                        Text="0"
+                        TextColor="Gold"
+                        FontAttributes="Bold"/>
+                </HorizontalStackLayout>
             </Grid>
             
-            <Grid ColumnDefinitions="*,*">
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="5">
+                <!-- Header row -->
                 <Label
                     Text="Macronutrients"
                     Style="{StaticResource SubHeadline}"
                     SemanticProperties.HeadingLevel="Level2"
-                    Grid.Column="0"/>
+                    Grid.Column="0"
+                    Grid.Row="0"/>
+
                 <Label
                     Text="Goal Progress"
                     Style="{StaticResource SubHeadline}"
                     SemanticProperties.HeadingLevel="Level2"
-                    Grid.Column="1"/>
+                    Grid.Column="1"
+                    Grid.Row="0"/>
+
+                <!-- Values row: current / maintenance / unit -->
+                <HorizontalStackLayout
+                    Grid.Column="0"
+                    Grid.Row="1"
+                    Spacing="5"
+                    VerticalOptions="Center">
+                    <Label
+                        x:Name="CurrentCaloriesLabel"
+                        Text="0"
+                        FontAttributes="Bold" />
+                    <Label
+                        Text="/"
+                        VerticalOptions="Center"/>
+                    <Label
+                        x:Name="MaintenanceCalorieLabel"
+                        Text="0"
+                        VerticalOptions="Center"/>
+                    <Label
+                        Text="kcal"
+                        VerticalOptions="End"
+                        Margin="0,0,0,4"/>
+                </HorizontalStackLayout>
+
+                <!-- Progress bar row -->
+                <ProgressBar
+                    x:Name="CalorieProgressBar"
+                    Grid.Column="0"
+                    Grid.Row="2"
+                    Progress="0"
+                    HeightRequest="10"
+                    WidthRequest="100"
+                    HorizontalOptions="Start"/>
             </Grid>
+
             <Label
                 Text="Weekly Workout Summary"
                 Style="{StaticResource SubHeadline}"
