@@ -26,5 +26,8 @@ namespace FitnessAppBackend.Models
 
         [Required, MaxLength(20)]
         public string Gender { get; set; } = "Prefer not to say";
+
+        [Required, MaxLength(20)]
+        public string ActivityLevel { get; set; } = "Sedentary";
     }
 }

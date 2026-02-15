@@ -9,6 +9,7 @@
         public decimal BodyWeight { get; set; }
         public decimal Height { get; set; }
         public string Gender { get; set; } = "Prefer not to say";
+        public string ActivityLevel { get; set; } = "Sedentary";
     }
 }
 // completed
