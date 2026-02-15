@@ -62,8 +62,7 @@ namespace NEAFitnessApp
 				await DisplayAlert("Error", "Please fill in all fields.", "OK");
 				return;
 			}
-            string selectedGender = GenderPicker.SelectedItem?.ToString() ?? "Prefer not to say";
-            string selectedActivity = ActivityPicker.SelectedItem?.ToString() ?? "Sedentary";
+
             var registerData = new RegisterRequest
 			{
 				UserName = UsernameEntry.Text,
@@ -71,8 +70,8 @@ namespace NEAFitnessApp
 				UserDOB = DateOnly.FromDateTime(DobPicker.Date),
 				BodyWeight = w,
 				Height = h,
-				Gender = selectedGender,
-				ActivityLevel = selectedActivity
+				Gender = GenderPicker.SelectedItem?.ToString() ?? "Prefer not to say",
+                ActivityLevel = ActivityPicker.SelectedItem?.ToString() ?? "Sedentary"
             };
 
 			using var client = new HttpClient();
