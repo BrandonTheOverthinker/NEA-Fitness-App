@@ -1,67 +1,68 @@
 namespace NEAFitnessApp;
 
 using System.Net.Http.Json;
-using NEAFitnessApp.Models; // Access to RegisterRequest.cs
+using NEAFitnessApp.Models;
 
 public partial class LoginWindow : ContentPage
 {
-	public LoginWindow()
-	{
-		InitializeComponent();
-	}
+    public LoginWindow()
+    {
+        InitializeComponent();
+    }
+
     private async void OnLoginClicked(object sender, EventArgs e)
     {
-
         if (string.IsNullOrWhiteSpace(UsernameEntry.Text) || string.IsNullOrWhiteSpace(PasswordEntry.Text))
         {
             await DisplayAlert("Error", "Please enter username and password", "OK");
             return;
         }
 
-            var loginData = new RegisterRequest
-            {
-                UserName = UsernameEntry.Text,
-                Password = PasswordEntry.Text
-            };
+        var loginData = new RegisterRequest { UserName = UsernameEntry.Text, Password = PasswordEntry.Text };
 
         using var client = new HttpClient();
-
-        string url = "https://localhost:7281/api/auth/login";
+        var url = "https://localhost:7281/api/auth/login";
 
         try
         {
             var response = await client.PostAsJsonAsync(url, loginData);
-            if (response.IsSuccessStatusCode) // Only navigate to backend if credentials are correct
+
+            if (response.IsSuccessStatusCode)
             {
+                // Use JsonElement to safely parse the response without needing a User class
+                var root = await response.Content.ReadFromJsonAsync<System.Text.Json.JsonElement>();
+
+                // Safely extract the maintenanceGoal if it exists in the JSON
+                if (root.TryGetProperty("maintenanceGoal", out var goalProperty))
+                {
+                    string goalValue = goalProperty.ToString();
+                    Preferences.Default.Set("LocalUserMaintenanceGoal", goalValue);
+                }
+
+                Preferences.Default.Set("UserName", UsernameEntry.Text);
+
                 if (Application.Current != null)
                 {
-                    Application.Current.OpenWindow(new Window(new AppShell())); // Opens the Home Page
-                    if (this.Window != null)
-                        Application.Current.CloseWindow(this.Window);
-                }
-                else
-                {
-                    await DisplayAlert("Error", "Application.Current is null. Unable to open a new window.", "OK");
+                    Application.Current.OpenWindow(new Window(new AppShell()));
+                    if (this.Window != null) Application.Current.CloseWindow(this.Window);
                 }
             }
-            else // Backend denied login
+            else
             {
-                await DisplayAlert("Login failed", "Invalid Username or Password.", "OK");
+                await DisplayAlert("Login failed", "Invalid credentials", "OK");
             }
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Connection Error", "Is the backend running? " + ex.Message, "OK");
+            await DisplayAlert("Error", "Login Error: " + ex.Message, "OK");
         }
     }
 
     private async void OnRegisterClicked(object sender, EventArgs e)
     {
-        //await Navigation.PushAsync(new RegistrationPage());
-
         if (Application.Current != null)
         {
-            Application.Current.OpenWindow(new Window(new RegistrationPage())); // Opens the Home Page
+            Application.Current.OpenWindow(new Window(new RegistrationPage()));
             if (this.Window != null)
                 Application.Current.CloseWindow(this.Window);
         }
@@ -69,35 +70,5 @@ public partial class LoginWindow : ContentPage
         {
             await DisplayAlert("Error", "Application.Current is null. Unable to open a new window.", "OK");
         }
-
-        //var registerData = new RegisterRequest
-        //{
-        //    UserName = UsernameEntry.Text,
-        //    Password = PasswordEntry.Text
-        //};
-
-        //using var client = new HttpClient();
-
-        //string url = "https://localhost:7281/api/auth/register";
-
-        //try
-        //{
-        //    var response = await client.PostAsJsonAsync(url, registerData);
-        //    if (response.IsSuccessStatusCode) // (if backend saved to DB)
-        //    {
-        //        await DisplayAlert("Success", "Account Created successfully", "OK");
-        //    }
-        //    else
-        //    {
-        //        string error = await response.Content.ReadAsStringAsync();
-        //        await DisplayAlert("Registration failed", error, "OK");
-        //    }
-        //}
-        //catch (Exception ex)
-        //{
-        //    await DisplayAlert("Connection Error", "Is the backend running? " + ex.Message, "OK");
-        //}
     }
-    
 }
-
