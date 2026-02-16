@@ -12,8 +12,13 @@ namespace NEAFitnessApp
         public RegistrationPage()
         {
             InitializeComponent();
+
             DobPicker.MaximumDate = DateTime.Today.AddYears(-18);
             DobPicker.MinimumDate = DateTime.Today.AddYears(-120);
+            
+            // Remove any previous user data to ensure a clean registration process:
+            Preferences.Default.Remove("LocalUserMaintenanceGoal");
+            Preferences.Default.Remove("UserName");
         }
 
         private void OnMetricsChanged(object sender, EventArgs e)
@@ -80,23 +85,24 @@ namespace NEAFitnessApp
                 MaintenanceGoal = Math.Round(currentCalculatedMaintenance, 0)
             };
 
-            Preferences.Default.Set("MaintenanceGoal", currentCalculatedMaintenance.ToString("F0"));
-            Preferences.Default.Set("UserName", UsernameEntry.Text);
-
             using var client = new HttpClient();
             var url = "https://localhost:7281/api/auth/register";
             try
             {
+                // API Call to register the user with the calculated maintenance goal:
                 var response = await client.PostAsJsonAsync(url, registrationData);
 
                 if (response.IsSuccessStatusCode)
                 {
+                    // Save the calculated maintenance goal and username locally using Preferences for later use in the app:
+                    Preferences.Default.Set("LocalUserMaintenanceGoal", currentCalculatedMaintenance.ToString("F0"));
+                    Preferences.Default.Set("UserName", UsernameEntry.Text);
+
                     await DisplayAlert("Saved", $"Goal: {currentCalculatedMaintenance:F0}", "OK");
                     Application.Current.MainPage = new AppShell();
                 }
                 else
                 {
-                    //await DisplayAlert("Error", "API Registration failed.", "OK");
                     string errorContent = await response.Content.ReadAsStringAsync();
                     await DisplayAlert("Error", $"API Error: {errorContent}", "OK");
                 }
