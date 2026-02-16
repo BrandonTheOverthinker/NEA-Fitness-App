@@ -9,13 +9,13 @@ namespace FitnessAppBackend.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly IUserRepository _userRepo;
-        private readonly PasswordHasher<User> _hasher = new();
+        private readonly IUserRepository userRepo;
+        private readonly PasswordHasher<User> hasher = new();
 
         public AuthController(IUserRepository userRepo)
         {
-            _userRepo = userRepo;
-            _hasher = new PasswordHasher<User>();
+            this.userRepo = userRepo;
+            hasher = new PasswordHasher<User>();
         }
 
         public record RegisterRequest(string UserName, string Password, DateOnly UserDOB, decimal BodyWeight, decimal Height, string Gender, string ActivityLevel, decimal MaintenanceGoal);
@@ -29,7 +29,7 @@ namespace FitnessAppBackend.Controllers
             if (string.IsNullOrWhiteSpace(request.Password) || request.Password.Length < 8)
                 return BadRequest("Password must be at least 8 characters.");
 
-            if (await _userRepo.UserExistsAsync(request.UserName))
+            if (await userRepo.UserExistsAsync(request.UserName))
                 return Conflict("Username already exists.");
 
             // Map new properties to the new User Table:
@@ -44,21 +44,21 @@ namespace FitnessAppBackend.Controllers
                 MaintenanceGoal = request.MaintenanceGoal
             };
             
-            newUser.PasswordHash = _hasher.HashPassword(newUser, request.Password);
+            newUser.PasswordHash = hasher.HashPassword(newUser, request.Password);
 
             // Save by using the Repository:
-            await _userRepo.CreateUserAsync(newUser);
+            await userRepo.CreateUserAsync(newUser);
             return Ok("-> User registered successfully.");
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] RegisterRequest request) // Get info from RegisterRequest and validate against DB records for authentication
         {
-            var user = await _userRepo.GetUserByUsernameAsync(request.UserName);
+            var user = await userRepo.GetUserByUsernameAsync(request.UserName);
             // Validation:
             if (user == null)
                 return Unauthorized("Invalid Username.");
-            var result = _hasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
+            var result = hasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
             if (result == PasswordVerificationResult.Failed)
                 return Unauthorized("Invalid Password.");
 
@@ -74,7 +74,7 @@ namespace FitnessAppBackend.Controllers
         [HttpGet("fitness-app-db")]
         public async Task<IActionResult> CreateDb()
         {
-            var userCount = await _userRepo.GetUserCountAsync();
+            var userCount = await userRepo.GetUserCountAsync();
             return Ok($"Connected. Users in DB: {userCount}");
         }
     }
