@@ -82,7 +82,7 @@ namespace NEAFitnessApp
                 Height = decimal.TryParse(HeightEntry.Text, out decimal height) ? height : 0,
                 Gender = GenderPicker.SelectedItem as string ?? "Prefer not to say",
                 ActivityLevel = ActivityPicker.SelectedItem?.ToString() ?? "Sedentary",
-                MaintenanceGoal = Math.Round(currentCalculatedMaintenance, 0)
+                MaintenanceGoal = (decimal)Math.Round(currentCalculatedMaintenance, 0)
             };
 
             using var client = new HttpClient();
