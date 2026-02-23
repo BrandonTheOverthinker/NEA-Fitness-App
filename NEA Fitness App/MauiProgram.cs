@@ -19,6 +19,10 @@ namespace NEAFitnessApp
     		builder.Logging.AddDebug();
 #endif
 
+            // Register pages / viewmodels if needed:
+            builder.Services.AddTransient<NEAFitnessApp.FoodLog>();
+
+            
             return builder.Build();
         }
     }
