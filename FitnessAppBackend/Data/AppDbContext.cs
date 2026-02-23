@@ -16,7 +16,7 @@ namespace FitnessAppBackend.Data
         public DbSet<ExerciseLog> ExerciseLogs => Set<ExerciseLog>();
         public DbSet<UserPersonalRecord> PersonalRecords => Set<UserPersonalRecord>();
 
-        public DbSet<Food> Foods => Set<Food>();
+        public DbSet<FoodItem> Foods => Set<FoodItem>();
         public DbSet<FoodLog> FoodLogs => Set<FoodLog>();
         public DbSet<Macronutrients> Macronutrients => Set<Macronutrients>();
 
@@ -39,7 +39,7 @@ namespace FitnessAppBackend.Data
             modelBuilder.Entity<ExerciseLog>().ToTable("ExerciseLog");
             modelBuilder.Entity<UserPersonalRecord>().ToTable("UserPersonalRecord");
 
-            modelBuilder.Entity<Food>().ToTable("Food");
+            modelBuilder.Entity<FoodItem>().ToTable("Food");
             modelBuilder.Entity<FoodLog>().ToTable("FoodLog");
             modelBuilder.Entity<Macronutrients>().ToTable("Macronutrients");
 

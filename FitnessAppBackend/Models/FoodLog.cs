@@ -8,14 +8,18 @@ namespace FitnessAppBackend.Models
         [Key]
         public int FoodLogID { get; set; }
 
-        public int FoodID { get; set; }
-        [ForeignKey(nameof(FoodID))]
-        public Food? Food { get; set; }
+        public int UserID { get; set; }
+        [ForeignKey(nameof(UserID))]
+        public User? User { get; set; }
+
+        public int FoodItemID { get; set; }
+        [ForeignKey(nameof(FoodItemID))]
+        public FoodItem? FoodItem { get; set; }
 
         public DateTime LogTime { get; set; }
 
         [Required]
-        [Column(TypeName = "decimal(7,2)")]
+        [Column(TypeName = "decimal(16,2)")]
         public decimal Quantity { get; set; }
     }
 }

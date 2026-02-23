@@ -1,16 +1,19 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FitnessAppBackend.Models
 {
-    public class Macronutrients
+    public class FoodItem
     {
         [Key]
-        public int MacroID { get; set; }
+        public int FoodItemID { get; set; }
 
-        public int FoodID { get; set; }
-        [ForeignKey(nameof(FoodID))]
-        public Food? Food { get; set; }
+        [Required, MaxLength(100)]
+        public string FoodName { get; set; } = string.Empty;
+
+        [MaxLength(50)]
+        public string? Barcode { get; set; } = string.Empty; // ? means nullable
 
         public int Calories { get; set; }
 
@@ -37,5 +40,9 @@ namespace FitnessAppBackend.Models
         [Required]
         [Column(TypeName = "decimal(7,2)")]
         public decimal Fibre { get; set; }
+
+        public int? CreatedByUserID { get; set; }
+        [ForeignKey(nameof(CreatedByUserID))]
+        public User? User { get; set; }
     }
 }
