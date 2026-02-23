@@ -17,15 +17,10 @@ namespace FitnessAppBackend.Controllers
         [HttpGet("search/{userId}")]
         public async Task<IActionResult> Search(int userId, [FromQuery] string query)
         {
+            // Get the data from the Repository:
             var results = await foodRepo.SearchFoodsAsync(query, userId);
 
-            // Convert to List for the sorting algorithm
-            var list = results.ToList();
-
-            // apply Merge Sort here
-            //var sortedList = SortingHelper.MergeSort(list);
-            var sortedList = 0; // placeholder for the sorted list  
-            return Ok(sortedList);
+            return Ok(results);
         }
     }
 }
