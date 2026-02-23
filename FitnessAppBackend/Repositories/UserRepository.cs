@@ -1,6 +1,6 @@
-﻿// Only file which can talk to the SQL database, and is responsible for fetching and saving user data.
-// Implements the IUserRepository interface, which defines the contract for user-related operations
-// Uses Entity Framework Core to interact with the database, allowing for asynchronous operations to improve performance and responsiveness
+﻿// These repositories are the only files which can talk to the SQL database, and this one is responsible for fetching and saving user data.
+// Implements the IUserRepository interface, which defines the contract for user-related operations.
+// Uses Entity Framework Core to interact with the database, allowing for asynchronous operations to improve performance and responsiveness.
 
 using FitnessAppBackend.Data;
 using FitnessAppBackend.Interfaces;
