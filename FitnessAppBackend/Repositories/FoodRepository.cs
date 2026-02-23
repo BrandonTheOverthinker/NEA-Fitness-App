@@ -14,40 +14,35 @@ namespace FitnessAppBackend.Repositories
             this.context = context;
         }
 
-        // Logic to find public items OR items created by the specific user:
-        public async Task<IEnumerable<FoodItem>> SearchFoodsAsync(string query, int userId)
+        public async Task<List<FoodItem>> GetAllFoodsAsync()
         {
-            return await context.FoodItems
-                .Where(f => (f.CreatedByUserID == null || f.CreatedByUserID == userId) && f.FoodName.Contains(query)).ToListAsync();
+            return await context.FoodItems.ToListAsync();
         }
 
-        // Used for the potential Barcode Scanner feature:
-        public async Task<FoodItem?> GetFoodByBarcodeAsync(string barcode)
+        public async Task<FoodItem> AddFoodAsync(FoodItem newFood)
         {
-            return await context.FoodItems
-                .FirstOrDefaultAsync(f => f.Barcode == barcode);
-        }
-
-        // Adds a new food definition to the library (Public or Private):
-        public async Task AddFoodItemAsync(FoodItem foodItem)
-        {
-            context.FoodItems.Add(foodItem);
+            context.FoodItems.Add(newFood);
             await context.SaveChangesAsync();
+            return newFood;
         }
 
-        // Records a meal entry in the FoodLog table:
-        public async Task LogFoodAsync(FoodLog log)
+        public async Task<List<FoodLog>> GetLogsByDateAsync(int userId, DateTime date)
         {
-            context.FoodLogs.Add(log);
-            await context.SaveChangesAsync();
-        }
-
-        // Fetches all logs for a specific day to calculate totals on the dashboard:
-        public async Task<IEnumerable<FoodLog>> GetDailyLogsAsync(int userId, DateTime date)
-        {
+            // Fixed casing: UserID instead of UserId
             return await context.FoodLogs
-                .Include(l => l.FoodItem) // Joins the food data so you have the macros
-                .Where(l => l.UserID == userId && l.LogTime.Date == date.Date)
+                .Include(f => f.FoodItem)
+                .Where(f => f.UserID == userId && f.LogTime.Date == date.Date)
+                .ToListAsync();
+        }
+
+        // Implementing the missing Interface member
+        public async Task<List<FoodLog>> GetWeeklyLogsAsync(int userId, DateTime startDate)
+        {
+            DateTime endDate = startDate.AddDays(7);
+            
+            return await context.FoodLogs
+                .Include(f => f.FoodItem)
+                .Where(f => f.UserID == userId && f.LogTime >= startDate && f.LogTime < endDate)
                 .ToListAsync();
         }
     }

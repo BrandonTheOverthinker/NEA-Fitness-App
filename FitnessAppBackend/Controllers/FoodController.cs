@@ -1,4 +1,5 @@
 ﻿using FitnessAppBackend.Interfaces;
+using FitnessAppBackend.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessAppBackend.Controllers
@@ -7,20 +8,31 @@ namespace FitnessAppBackend.Controllers
     [Route("api/[controller]")]
     public class FoodController : ControllerBase
     {
-        private readonly IFoodRepository foodRepo;
+        private readonly IFoodRepository _foodRepo;
+        public FoodController(IFoodRepository foodRepo) { _foodRepo = foodRepo; }
 
-        public FoodController(IFoodRepository foodRepo)
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllFoods() => Ok(await _foodRepo.GetAllFoodsAsync());
+
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateFood([FromBody] FoodItem newFood)
         {
-            this.foodRepo = foodRepo;
+            var created = await _foodRepo.AddFoodAsync(newFood);
+            return Ok(created);
         }
 
-        [HttpGet("search/{userId}")]
-        public async Task<IActionResult> Search(int userId, [FromQuery] string query)
+        [HttpGet("logs/{userId}/{date}")]
+        public async Task<IActionResult> GetDailyLogs(int userId, DateTime date)
         {
-            // Get the data from the Repository:
-            var results = await foodRepo.SearchFoodsAsync(query, userId);
-
-            return Ok(results);
+            var logs = await _foodRepo.GetLogsByDateAsync(userId, date);
+            return Ok(logs);
+        }
+        [HttpGet("weekly/{userId}/{startDate}")]
+        public async Task<IActionResult> GetWeeklyLogs(int userId, DateTime startDate)
+        {
+            // This calls your repository method we fixed earlier
+            var logs = await _foodRepo.GetWeeklyLogsAsync(userId, startDate);
+            return Ok(logs);
         }
     }
 }

@@ -1,25 +1,173 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:NEAFitnessApp.Models"
              x:Class="NEAFitnessApp.FoodLog"
-             Title="Food Log">
-    <VerticalStackLayout
-        Padding="30,0"
-        Spacing="35">
-        <Label
-            Text="Intake for this week"
-            Style="{StaticResource Headline}"
-            HorizontalTextAlignment="Start"
-            HorizontalOptions="Start"/>
-        <Label
-            Text="Macronutrients Today"
-            Style="{StaticResource Headline}"
-            HorizontalTextAlignment="Start"
-            HorizontalOptions="Start"/>
-        <Label
-            Text="Notes"
-            Style="{StaticResource SubHeadline}"
-            HorizontalTextAlignment="Start"
-            HorizontalOptions="Start"/>
-    </VerticalStackLayout>
+             Title="Food Log &amp; Nutrition"
+             BackgroundColor="{StaticResource Secondary}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20"
+                             Spacing="20">
+
+            <Border StrokeThickness="1"
+                    Stroke="{StaticResource Primary}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Intake Summary"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center" />
+
+                    <Grid ColumnDefinitions="*, *, *"
+                          RowDefinitions="Auto, Auto">
+                        <Label Text="Today"
+                               Grid.Column="0"
+                               HorizontalOptions="Center" />
+                        <Label Text="{Binding TotalCalories}"
+                               Grid.Row="1"
+                               Grid.Column="0"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center" />
+
+                        <Label Text="Protein"
+                               Grid.Column="1"
+                               HorizontalOptions="Center" />
+                        <Label Text="{Binding TotalProtein, StringFormat='{0}g'}"
+                               Grid.Row="1"
+                               Grid.Column="1"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center" />
+
+                        <Label Text="7-Day Avg"
+                               Grid.Column="2"
+                               HorizontalOptions="Center" />
+                        <Label Text="{Binding WeeklyAverageDisplay}"
+                               Grid.Row="1"
+                               Grid.Column="2"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="Database Management"
+                   FontSize="18"
+                   FontAttributes="Bold" />
+            <Border Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Entry x:Name="NewFoodNameEntry"
+                           Placeholder="Food Name" />
+                    <Grid ColumnDefinitions="*, *"
+                          ColumnSpacing="10">
+                        <Entry x:Name="NewFoodCalsEntry"
+                               Placeholder="Calories"
+                               Keyboard="Numeric"
+                               Grid.Column="0" />
+                        <Entry x:Name="NewFoodProteinEntry"
+                               Placeholder="Protein (g)"
+                               Keyboard="Numeric"
+                               Grid.Column="1" />
+                    </Grid>
+                    <Button Text="Add to Database"
+                            Clicked="OnCreateFoodClicked"
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="White" />
+                </VerticalStackLayout>
+            </Border>
+
+            <HorizontalStackLayout Spacing="10">
+                <Label Text="Viewing Log For:"
+                       VerticalOptions="Center"
+                       FontAttributes="Bold" />
+                <DatePicker x:Name="LogDatePicker"
+                            Format="yyyy-MM-dd"
+                            DateSelected="OnDateSelected" />
+            </HorizontalStackLayout>
+
+            <Grid ColumnDefinitions="2*, *, *, *"
+                  Padding="8"
+                  BackgroundColor="{StaticResource Primary}">
+                <Label Text="Name"
+                       TextColor="White"
+                       FontAttributes="Bold" />
+                <Label Text="Cals"
+                       TextColor="White"
+                       FontAttributes="Bold"
+                       Grid.Column="1" />
+                <Label Text="Prot"
+                       TextColor="White"
+                       FontAttributes="Bold"
+                       Grid.Column="2" />
+                <Label Text="Time"
+                       TextColor="White"
+                       FontAttributes="Bold"
+                       Grid.Column="3" />
+            </Grid>
+
+            <CollectionView ItemsSource="{Binding DailyLogs}"
+                            HeightRequest="200">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:FoodLogEntry">
+                        <Grid ColumnDefinitions="2*, *, *, *"
+                              Padding="8">
+                            <Label Text="{Binding FoodItem.FoodName}" />
+                            <Label Text="{Binding FoodItem.Calories}"
+                                   Grid.Column="1" />
+                            <Label Text="{Binding FoodItem.Protein}"
+                                   Grid.Column="2" />
+                            <Label Text="{Binding LogTime, StringFormat='{0:HH:mm}'}"
+                                   Grid.Column="3" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Label Text="Food Database (Sorted A-Z)"
+                   FontSize="18"
+                   FontAttributes="Bold" />
+            
+
+            <CollectionView ItemsSource="{Binding AllFoodsDB}"
+                            HeightRequest="300">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:FoodItem">
+                        <Border Margin="0,0,0,8"
+                                Padding="12">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Grid ColumnDefinitions="*, Auto">
+                                <VerticalStackLayout Grid.Column="0">
+                                    <Label Text="{Binding FoodName}"
+                                           FontAttributes="Bold" />
+                                    <Label Text="{Binding Calories, StringFormat='{0} kcal | {1}g Prot'}"
+                                           TextColor="DimGray"
+                                           FontSize="12" />
+                                </VerticalStackLayout>
+                                <Button Text="Log"
+                                        Grid.Column="1"
+                                        Clicked="OnLogFoodClicked"
+                                        CommandParameter="{Binding .}"
+                                        HeightRequest="36"
+                                        Padding="10,0"
+                                        FontSize="12" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

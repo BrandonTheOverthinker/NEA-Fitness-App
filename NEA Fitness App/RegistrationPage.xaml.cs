@@ -75,6 +75,7 @@ namespace NEAFitnessApp
             // Database Registration:
             var registrationData = new RegisterRequest
             {
+                UserID = 0, // Created later by the backend, so set to 0 for now
                 UserName = UsernameEntry.Text,
                 Password = PasswordEntry.Text,
                 UserDOB = DateOnly.FromDateTime(DobPicker.Date),
@@ -94,12 +95,19 @@ namespace NEAFitnessApp
 
                 if (response.IsSuccessStatusCode)
                 {
-                    // Save the calculated maintenance goal and username locally using Preferences for later use in the app:
-                    Preferences.Default.Set("LocalUserMaintenanceGoal", currentCalculatedMaintenance.ToString("F0"));
-                    Preferences.Default.Set("UserName", UsernameEntry.Text);
+                    var createdUser = await response.Content.ReadFromJsonAsync<RegisterRequest>();
 
-                    await DisplayAlert("Saved", $"Goal: {currentCalculatedMaintenance:F0}", "OK");
-                    Application.Current.MainPage = new AppShell();
+                    if (createdUser != null)
+                    {
+                        // Save everything locally:
+                        Preferences.Default.Set("LocalUserMaintenanceGoal", currentCalculatedMaintenance.ToString("F0"));
+                        Preferences.Default.Set("UserName", UsernameEntry.Text);
+
+                        Preferences.Set("CurrentUserID", createdUser.UserID); // Needed for FoodLog
+
+                        await DisplayAlert("Saved", $"Goal: {currentCalculatedMaintenance:F0}", "OK");
+                        Application.Current.MainPage = new AppShell();
+                    }
                 }
                 else
                 {
@@ -109,6 +117,8 @@ namespace NEAFitnessApp
             }
             catch
             {
+                // Don't have a real ID when testing so use -1
+                Preferences.Set("CurrentUserID", -1);
                 // Navigate anyway for testing purposes
                 await DisplayAlert("Offline", "Goal saved locally.", "OK");
                 Application.Current.MainPage = new AppShell();

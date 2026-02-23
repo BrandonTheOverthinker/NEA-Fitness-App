@@ -4,10 +4,9 @@ namespace FitnessAppBackend.Interfaces
 {
     public interface IFoodRepository
     {
-        Task<IEnumerable<FoodItem>> SearchFoodsAsync(string query, int userId);
-        Task<FoodItem> GetFoodByBarcodeAsync(string barcode);
-        Task AddFoodItemAsync(FoodItem foodItem);
-        Task LogFoodAsync(FoodLog log);
-        Task<IEnumerable<FoodLog>> GetDailyLogsAsync(int userId, DateTime date);
+        Task<List<FoodItem>> GetAllFoodsAsync();
+        Task<FoodItem> AddFoodAsync(FoodItem newFood);
+        Task<List<FoodLog>> GetLogsByDateAsync(int userId, DateTime date);
+        Task<List<FoodLog>> GetWeeklyLogsAsync(int userId, DateTime startDate);
     }
 }
