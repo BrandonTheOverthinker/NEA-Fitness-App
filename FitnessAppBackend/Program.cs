@@ -17,6 +17,7 @@ builder.Services.AddDbContext<AppDbContext>
     (options => options.UseSqlServer(connectionString));
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IFoodRepository, FoodRepository>();
 
 var app = builder.Build();
 
