@@ -18,7 +18,7 @@ namespace FitnessAppBackend.Controllers
             hasher = new PasswordHasher<User>();
         }
 
-        public record RegisterRequest(string UserName, string Password, DateOnly UserDOB, decimal BodyWeight, decimal Height, string Gender, string ActivityLevel, decimal MaintenanceGoal);
+        public record RegisterRequest(int UserID, string UserName, string Password, DateOnly UserDOB, decimal BodyWeight, decimal Height, string Gender, string ActivityLevel, decimal MaintenanceGoal);
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request) // Get info from RegisterRequest and map to User model for DB insertion
@@ -35,6 +35,7 @@ namespace FitnessAppBackend.Controllers
             // Map new properties to the new User Table:
             var newUser = new User
             {
+                UserID = request.UserID,
                 UserName = request.UserName,
                 UserDOB = request.UserDOB,
                 BodyWeight = request.BodyWeight,
