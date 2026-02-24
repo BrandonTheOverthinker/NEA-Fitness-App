@@ -11,24 +11,23 @@ namespace FitnessAppBackend.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly AppDbContext _context;
-        public UserRepository(AppDbContext context) => _context = context;
+        private readonly AppDbContext context;
+        public UserRepository(AppDbContext context) => this.context = context;
 
         public async Task<User?> GetUserByUsernameAsync(string username) =>
-            await _context.Users.FirstOrDefaultAsync(u => u.UserName == username);
+            await context.Users.FirstOrDefaultAsync(u => u.UserName == username);
 
         public async Task CreateUserAsync(User user)
         {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            context.Users.Add(user);
+            await context.SaveChangesAsync();
         }
 
         public async Task<bool> UserExistsAsync(string username) =>
-            await _context.Users.AnyAsync(u => u.UserName == username);
+            await context.Users.AnyAsync(u => u.UserName == username);
 
         public async Task<int> GetUserCountAsync() =>
-            await _context.Users.CountAsync();
-        
+            await context.Users.CountAsync();
     }
 }
 // completed
