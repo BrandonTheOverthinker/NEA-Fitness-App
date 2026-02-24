@@ -174,7 +174,7 @@ public partial class FoodLog : ContentPage
 
         // Create the log object to send to the backend
         // Note: Use the property names that match your Backend FoodLog model (UserID, FoodItemID, etc.)
-        var newLog = new
+        var newLog = new FoodLogEntry
         {
             UserID = userId,
             FoodItemID = selectedFood.FoodItemId,
@@ -182,9 +182,10 @@ public partial class FoodLog : ContentPage
             Quantity = 1.0m // Defaulting to 1 serving
         };
 
+        var url = "https://localhost:7281/api/auth/register";
         try
         {
-            var response = await _httpClient.PostAsJsonAsync("api/food/log", newLog);
+            var response = await _httpClient.PostAsJsonAsync(url, newLog);
 
             if (response.IsSuccessStatusCode)
             {
