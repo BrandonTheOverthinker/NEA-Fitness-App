@@ -9,10 +9,7 @@ namespace FitnessAppBackend.Repositories
     {
         private readonly AppDbContext context;
 
-        public FoodRepository(AppDbContext context)
-        {
-            this.context = context;
-        }
+        public FoodRepository(AppDbContext context) => this.context = context;
 
         public async Task<List<FoodItem>> GetAllFoodsAsync()
         {
