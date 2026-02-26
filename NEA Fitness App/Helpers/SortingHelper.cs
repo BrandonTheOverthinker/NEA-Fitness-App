@@ -10,7 +10,7 @@ namespace NEAFitnessApp.Helpers
 {
     public static class SortingHelper
     {
-        // ALPHABETICAL SORT (For the Food Database)
+        // Alaphabetical Sort (For Food Database):
         public static List<FoodItem> MergeSort(List<FoodItem> list)
         {
             // Check if list is sorted:
@@ -70,7 +70,7 @@ namespace NEAFitnessApp.Helpers
             return result;
         }
 
-        // CHRONOLOGICAL SORT (For the Daily Food Logs)
+        // Chronological Sort (For Daily Food Log):
         public static List<FoodLogEntry> MergeSortLogs(List<FoodLogEntry> list)
         {
             if (list.Count <= 1) return list;
@@ -87,7 +87,7 @@ namespace NEAFitnessApp.Helpers
             List<FoodLogEntry> result = new List<FoodLogEntry>();
             while (left.Count > 0 && right.Count > 0)
             {
-                // Compare LogTime instead of FoodName
+                // Time Comparison:
                 if (left[0].LogTime <= right[0].LogTime)
                 {
                     result.Add(left[0]); left.RemoveAt(0);
