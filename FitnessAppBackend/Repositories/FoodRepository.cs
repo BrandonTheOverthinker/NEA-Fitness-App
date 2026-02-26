@@ -25,14 +25,12 @@ namespace FitnessAppBackend.Repositories
 
         public async Task<List<FoodLog>> GetLogsByDateAsync(int userId, DateTime date)
         {
-            // Fixed casing: UserID instead of UserId
             return await context.FoodLogs
                 .Include(f => f.FoodItem)
                 .Where(f => f.UserID == userId && f.LogTime.Date == date.Date)
                 .ToListAsync();
         }
 
-        // Implementing the missing Interface member
         public async Task<List<FoodLog>> GetWeeklyLogsAsync(int userId, DateTime startDate)
         {
             DateTime endDate = startDate.AddDays(7);
@@ -40,6 +38,16 @@ namespace FitnessAppBackend.Repositories
             return await context.FoodLogs
                 .Include(f => f.FoodItem)
                 .Where(f => f.UserID == userId && f.LogTime >= startDate && f.LogTime < endDate)
+                .ToListAsync();
+        }
+
+        public async Task<List<FoodLog>> LogFoodAsync(int userId, DateTime date, FoodLog food)
+        {
+            context.FoodLogs.Add(food);
+            await context.SaveChangesAsync();
+            return await context.FoodLogs
+                .Include(f => f.FoodItem)
+                .Where(f => f.UserID == userId && f.LogTime.Date == date.Date)
                 .ToListAsync();
         }
     }

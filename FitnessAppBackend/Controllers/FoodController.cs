@@ -27,11 +27,19 @@ namespace FitnessAppBackend.Controllers
             var logs = await foodRepo.GetLogsByDateAsync(UserID, date);
             return Ok(logs);
         }
+
         [HttpGet("weekly/{userId}/{startDate}")]
         public async Task<IActionResult> GetWeeklyLogs(int UserID, DateTime startDate)
         {
             var logs = await foodRepo.GetWeeklyLogsAsync(UserID, startDate);
             return Ok(logs);
+        }
+
+        [HttpPost("log")]
+        public async Task<IActionResult> LogFood(int userId, [FromBody] FoodLog food, DateTime date)
+        {
+            var updatedLogs = await foodRepo.LogFoodAsync(userId, date, food);
+            return Ok(updatedLogs);
         }
     }
 }
