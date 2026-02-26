@@ -36,10 +36,18 @@ namespace FitnessAppBackend.Controllers
         }
 
         [HttpPost("log")]
-        public async Task<IActionResult> LogFood(int userId, [FromBody] FoodLog food, DateTime date)
+        public async Task<IActionResult> PostFoodLog([FromBody] FoodLog newLog)
         {
-            var updatedLogs = await foodRepo.LogFoodAsync(userId, date, food);
-            return Ok(updatedLogs);
+            if (newLog == null)
+            {
+                return BadRequest("Data not recieved.");
+            }
+            try
+            {
+                await foodRepo.LogFoodAsync(newLog.UserID, DateTime.Now, newLog);
+                return Ok();
+            }
+            catch (Exception ex) { return StatusCode(500, ex.Message); }
         }
     }
 }
