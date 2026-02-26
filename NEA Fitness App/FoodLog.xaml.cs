@@ -180,10 +180,9 @@ public partial class FoodLog : ContentPage
             Quantity = 1.0m // Defaulting to 1 serving
         };
 
-        var url = "https://localhost:7281/api/auth/register";
         try
         {
-            var response = await _httpClient.PostAsJsonAsync(url, newLog);
+            var response = await _httpClient.PostAsJsonAsync("api/auth/log", newLog);
 
             if (response.IsSuccessStatusCode)
             {
@@ -195,12 +194,13 @@ public partial class FoodLog : ContentPage
             }
             else
             {
-                await DisplayAlert("Error", "Failed to log food.", "OK");
+                var error = await response.Content.ReadAsStringAsync();
+                await DisplayAlert("Error", "Failed to log food. " + error, "OK");
             }
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", "Connection error: " + ex.Message, "OK");
+            await DisplayAlert("Connection Error", ex.Message, "OK");
         }
     }
 }
