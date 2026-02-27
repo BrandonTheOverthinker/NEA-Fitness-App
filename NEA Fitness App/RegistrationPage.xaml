@@ -30,31 +30,39 @@
                     Grid.Row="1"
                     WidthRequest="120"
                     Placeholder="000.0"
+                    PlaceholderColor="#212121"
                     Keyboard="Numeric"
-                    TextChanged="OnMetricsChanged" />
+                    TextChanged="OnMetricsChanged"
+                    TextColor="#212121"
+                    BackgroundColor="#41c146"/>
                 <Label
                     Text="Height (Cm)"
                     HorizontalOptions="Center"
                     Grid.Column="1"
-                    Grid.Row="0" />
+                    Grid.Row="0"/>
                 <Entry
                     x:Name="HeightEntry"
                     Grid.Column="1"
                     Grid.Row="1"
                     WidthRequest="120"
                     Placeholder="000.0"
+                    PlaceholderColor="#212121"
                     Keyboard="Numeric"
-                    TextChanged="OnMetricsChanged" />
+                    TextChanged="OnMetricsChanged"
+                    TextColor="#212121"
+                    BackgroundColor="#41c146"/>
                 <Label
                     Text="Select Gender"
                     HorizontalOptions="Center"
                     Grid.Column="2"
-                    Grid.Row="0" />
+                    Grid.Row="0"/>
                 <Picker
                     x:Name="GenderPicker" 
                     Grid.Column="2"
                     Grid.Row="1" 
                     SelectedIndexChanged="OnMetricsChanged"
+                    TextColor="#212121"
+                    BackgroundColor="#41c146"
                     WidthRequest="120">
                     <Picker.Items>
                         <x:String>Male</x:String>
@@ -71,6 +79,8 @@
                     x:Name="DobPicker"
                     Grid.Column="3"
                     Grid.Row="1"
+                    TextColor="#212121"
+                    BackgroundColor="#41c146"
                     HorizontalOptions="Center"
                     DateSelected="OnMetricsChanged"
                     WidthRequest="120" />
@@ -107,6 +117,8 @@
                     x:Name="ActivityPicker" 
                     Grid.Row="6"
                     Title="Select Activity Level" 
+                    TextColor="#212121"
+                    BackgroundColor="#41c146"
                     SelectedIndexChanged="OnMetricsChanged"
                     HorizontalOptions="Center"
                     WidthRequest="240">
