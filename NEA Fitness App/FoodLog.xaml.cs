@@ -29,11 +29,10 @@ public partial class FoodLog : ContentPage
 
         try
         {
-            // This runs all three methods simultaneously
             await Task.WhenAll(
                 LoadAllFoods(),
                 LoadDailyLogs(DateTime.Today),
-                CalculateWeeklyAverage() // This removes the "low opacity" status!
+                CalculateWeeklyAverage()
             );
         }
         catch (Exception ex)
@@ -50,7 +49,7 @@ public partial class FoodLog : ContentPage
             var foods = await _httpClient.GetFromJsonAsync<List<FoodItem>>("api/food/all");
             if (foods != null)
             {
-                var sorted = SortingHelper.MergeSort(foods); // Your Merge Sort!
+                var sorted = SortingHelper.MergeSortAlphabetical(foods);
                 AllFoodsDB.Clear();
                 foreach (var f in sorted) AllFoodsDB.Add(f);
             }
@@ -67,12 +66,12 @@ public partial class FoodLog : ContentPage
             var logs = await _httpClient.GetFromJsonAsync<List<FoodLogEntry>>($"api/food/logs/{userId}/{date:yyyy-MM-dd}");
             if (logs != null)
             {
-                // Note: You can add a MergeSort variant for LogTime if you want logs chronological!
                 DailyLogs.Clear();
                 decimal cals = 0;
                 decimal prot = 0;
+                var sorted = SortingHelper.MergeSortChronological(logs);
 
-                foreach (var log in logs)
+                foreach (var log in sorted)
                 {
                     DailyLogs.Add(log);
                     cals += log.FoodItem.Calories;
@@ -86,7 +85,7 @@ public partial class FoodLog : ContentPage
                 OnPropertyChanged(nameof(TotalProtein));
             }
         }
-        catch { /* Handle errors */ }
+        catch (Exception ex) { await DisplayAlert("Error", ex.Message, "OK"); }
     }
 
     // CREATE NEW FOOD
@@ -131,7 +130,7 @@ public partial class FoodLog : ContentPage
 
         try
         {
-            // 1. Fetch the data from your new controller endpoint
+            // 1. Fetch the data from new controller endpoint
             var response = await _httpClient.GetFromJsonAsync<List<FoodLogEntry>>(
                 $"api/food/weekly/{userId}/{startDate:yyyy-MM-dd}");
 
@@ -154,7 +153,7 @@ public partial class FoodLog : ContentPage
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Average Calculation Error: {ex.Message}");
-            WeeklyAverageDisplay = "ERR";
+            WeeklyAverageDisplay = "Error";
         }
     }
     private async void OnLogFoodClicked(object sender, EventArgs e)
@@ -173,7 +172,6 @@ public partial class FoodLog : ContentPage
         }
 
         // Create the log object to send to the backend
-        // Note: Use the property names that match your Backend FoodLog model (UserID, FoodItemID, etc.)
         var newLog = new FoodLogEntry
         {
             UserID = userId,
@@ -182,10 +180,9 @@ public partial class FoodLog : ContentPage
             Quantity = 1.0m // Defaulting to 1 serving
         };
 
-        var url = "https://localhost:7281/api/auth/register";
         try
         {
-            var response = await _httpClient.PostAsJsonAsync(url, newLog);
+            var response = await _httpClient.PostAsJsonAsync("api/auth/log", newLog);
 
             if (response.IsSuccessStatusCode)
             {
@@ -197,12 +194,13 @@ public partial class FoodLog : ContentPage
             }
             else
             {
-                await DisplayAlert("Error", "Failed to log food.", "OK");
+                var error = await response.Content.ReadAsStringAsync();
+                await DisplayAlert("Error", "Failed to log food. " + error, "OK");
             }
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", "Connection error: " + ex.Message, "OK");
+            await DisplayAlert("Connection Error", ex.Message, "OK");
         }
     }
 }

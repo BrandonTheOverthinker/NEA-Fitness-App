@@ -10,8 +10,8 @@ namespace NEAFitnessApp.Helpers
 {
     public static class SortingHelper
     {
-        // ALPHABETICAL SORT (For the Food Database)
-        public static List<FoodItem> MergeSort(List<FoodItem> list)
+        // Alaphabetical Sort (For Food Database):
+        public static List<FoodItem> MergeSortAlphabetical(List<FoodItem> list)
         {
             // Check if list is sorted:
             if (list.Count <= 1)
@@ -29,8 +29,8 @@ namespace NEAFitnessApp.Helpers
                 right.Add(list[i]);
 
             // Recursively sort both halves:
-            left = MergeSort(left);
-            right = MergeSort(right);
+            left = MergeSortAlphabetical(left);
+            right = MergeSortAlphabetical(right);
 
             // Merge the sorted halves:
             return Merge(left, right);
@@ -70,8 +70,8 @@ namespace NEAFitnessApp.Helpers
             return result;
         }
 
-        // CHRONOLOGICAL SORT (For the Daily Food Logs)
-        public static List<FoodLogEntry> MergeSortLogs(List<FoodLogEntry> list)
+        // Chronological Sort (For Daily Food Log):
+        public static List<FoodLogEntry> MergeSortChronological(List<FoodLogEntry> list)
         {
             if (list.Count <= 1) return list;
 
@@ -79,7 +79,7 @@ namespace NEAFitnessApp.Helpers
             var left = list.GetRange(0, midpoint);
             var right = list.GetRange(midpoint, list.Count - midpoint);
 
-            return MergeLogs(MergeSortLogs(left), MergeSortLogs(right));
+            return MergeLogs(MergeSortChronological(left), MergeSortChronological(right));
         }
 
         private static List<FoodLogEntry> MergeLogs(List<FoodLogEntry> left, List<FoodLogEntry> right)
@@ -87,7 +87,7 @@ namespace NEAFitnessApp.Helpers
             List<FoodLogEntry> result = new List<FoodLogEntry>();
             while (left.Count > 0 && right.Count > 0)
             {
-                // Compare LogTime instead of FoodName
+                // Time Comparison:
                 if (left[0].LogTime <= right[0].LogTime)
                 {
                     result.Add(left[0]); left.RemoveAt(0);

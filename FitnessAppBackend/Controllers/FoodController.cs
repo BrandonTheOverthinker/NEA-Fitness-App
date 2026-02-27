@@ -22,16 +22,32 @@ namespace FitnessAppBackend.Controllers
         }
 
         [HttpGet("logs/{userId}/{date}")]
-        public async Task<IActionResult> GetDailyLogs(int userId, DateTime date)
+        public async Task<IActionResult> GetDailyLogs(int UserID, DateTime date)
         {
-            var logs = await foodRepo.GetLogsByDateAsync(userId, date);
+            var logs = await foodRepo.GetLogsByDateAsync(UserID, date);
             return Ok(logs);
         }
+
         [HttpGet("weekly/{userId}/{startDate}")]
-        public async Task<IActionResult> GetWeeklyLogs(int userId, DateTime startDate)
+        public async Task<IActionResult> GetWeeklyLogs(int UserID, DateTime startDate)
         {
-            var logs = await foodRepo.GetWeeklyLogsAsync(userId, startDate);
+            var logs = await foodRepo.GetWeeklyLogsAsync(UserID, startDate);
             return Ok(logs);
+        }
+
+        [HttpPost("log")]
+        public async Task<IActionResult> PostFoodLog([FromBody] FoodLog newLog)
+        {
+            if (newLog == null)
+            {
+                return BadRequest("Data not recieved.");
+            }
+            try
+            {
+                await foodRepo.LogFoodAsync(newLog.UserID, DateTime.Now, newLog);
+                return Ok();
+            }
+            catch (Exception ex) { return StatusCode(500, ex.Message); }
         }
     }
 }

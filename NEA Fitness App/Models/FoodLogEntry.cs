@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NEAFitnessApp.Models
 {
-    public class FoodLogEntry
+    public record FoodLogEntry
     {
         public int FoodLogID { get; set; }
         public int UserID { get; set; }
