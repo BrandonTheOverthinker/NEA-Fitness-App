@@ -24,23 +24,24 @@ namespace FitnessAppBackend.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterRequest request) // Get info from RegisterRequest and map to User model for DB insertion
         {
             // Validation:
-            var errors = new List<string>();
-            if (string.IsNullOrWhiteSpace(request.UserName) || request.UserName.Length > 50)
-                errors.Add("Username is required and must be <= 50 characters.");
-            if (string.IsNullOrWhiteSpace(request.Password) || request.Password.Length < 8)
-                errors.Add("Password must be at least 8 characters.");
-            if (request.Height <= 0m || request.Height > 300.0m) 
-                errors.Add("Height must not be empty, and must be below 300cm."); 
-            if (request.BodyWeight <= 0m || request.BodyWeight > 999.9m)
-                errors.Add("Body Weight must not be empty, and must be below 1000kg."); 
-            if (request.Gender == null) 
-                errors.Add("Please select a gender."); 
-            if (request.ActivityLevel == null)
-                errors.Add("Please select an Activity Level.");
-            if (await userRepo.UserExistsAsync(request.UserName))
-                errors.Add("Username already taken.");
-            if (errors.Any())
-                return BadRequest(new { errors });
+            //var errors = new List<string>();
+
+            //if (string.IsNullOrWhiteSpace(request.UserName) || request.UserName.Length > 50)
+            //    errors.Add("Username is required and must be <= 50 characters.");
+            //if (string.IsNullOrWhiteSpace(request.Password) || request.Password.Length < 8)
+            //    errors.Add("Password must be at least 8 characters.");
+            //if (request.Height <= 0m || request.Height > 300.0m)
+            //    errors.Add("Height must not be empty, and must be below 300cm.");
+            //if (request.BodyWeight <= 0m || request.BodyWeight > 999.9m)
+            //    errors.Add("Body Weight must not be empty, and must be below 1000kg.");
+            //if (request.Gender == null)
+            //    errors.Add("Please select a gender.");
+            //if (request.ActivityLevel == null)
+            //    errors.Add("Please select an Activity Level.");
+            //if (await userRepo.UserExistsAsync(request.UserName))
+            //    errors.Add("Username already taken.");
+            //if (errors.Any())
+            //    return BadRequest(new { errors });
 
             // Map new properties to the new User Table:
             var newUser = new User
