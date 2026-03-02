@@ -1,4 +1,5 @@
-﻿using FitnessAppBackend.Data;
+﻿// Only file with direct DB access for food-related operations
+using FitnessAppBackend.Data;
 using FitnessAppBackend.Interfaces;
 using FitnessAppBackend.Models;
 using Microsoft.EntityFrameworkCore;
