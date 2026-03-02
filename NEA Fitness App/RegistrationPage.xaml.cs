@@ -65,12 +65,27 @@ namespace NEAFitnessApp
 
         private async void OnFinaliseRegistrationClicked(object sender, EventArgs e)
         {
-            // Check if a calculation has actually happened:
-            if (currentCalculatedMaintenance <= 0)
+            var registrationErrors = new List<string>();
+
+            if (string.IsNullOrEmpty(UsernameEntry.Text) || UsernameEntry.Text.Length > 50)
+                registrationErrors.Add("Username must be between 1 and 50 characters (inclusive).");
+            if (string.IsNullOrEmpty(PasswordEntry.Text) || PasswordEntry.Text.Length < 8)
+                registrationErrors.Add("Password must be at least 8 characters in length.");
+            if (decimal.TryParse(WeightEntry.Text, out decimal weightCheck) || weightCheck < 0.1m || weightCheck > 999.9m)
+                registrationErrors.Add("Please enter a weight between 0.1 and 999.9 (inclusive).");
+            if (decimal.TryParse(HeightEntry.Text, out decimal heightCheck) || heightCheck < 0.1m || heightCheck > 300.0m)
+                registrationErrors.Add("Please enter a weight between 0.1 and 300.0 (inclusive).");
+            if (GenderPicker.SelectedItem == null)
+                registrationErrors.Add("Please select a Gender. This helps fine-tune your maintenance calorie calculation.");
+            if (ActivityPicker.SelectedItem == null)
+                registrationErrors.Add("Please select an Activity Level.");
+
+            if (registrationErrors.Any())
             {
-                await DisplayAlert("Error", "Please enter valid metrics first.", "OK");
+                await DisplayAlert("Registration Failed.", string.Join("\n", registrationErrors), "OK");
                 return;
             }
+
 
             // Database Registration:
             var registrationData = new RegisterRequest
