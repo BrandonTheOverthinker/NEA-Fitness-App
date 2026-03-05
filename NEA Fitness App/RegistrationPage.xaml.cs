@@ -71,10 +71,10 @@ namespace NEAFitnessApp
                 registrationErrors.Add("Username must be between 1 and 50 characters (inclusive).");
             if (string.IsNullOrEmpty(PasswordEntry.Text) || PasswordEntry.Text.Length < 8)
                 registrationErrors.Add("Password must be at least 8 characters in length.");
-            if (decimal.TryParse(WeightEntry.Text, out decimal weightCheck) || weightCheck < 0.1m || weightCheck > 999.9m)
-                registrationErrors.Add("Please enter a weight between 0.1 and 999.9 (inclusive).");
-            if (decimal.TryParse(HeightEntry.Text, out decimal heightCheck) || heightCheck < 0.1m || heightCheck > 300.0m)
-                registrationErrors.Add("Please enter a weight between 0.1 and 300.0 (inclusive).");
+            if (decimal.TryParse(WeightEntry.Text, out decimal weightCheck) || weightCheck < 6.0m || weightCheck > 699.9m)
+                registrationErrors.Add("Please enter a weight between 6.0Kg and 699.9Kg (inclusive).");
+            if (decimal.TryParse(HeightEntry.Text, out decimal heightCheck) || heightCheck < 20.0m || heightCheck > 299.9m)
+                registrationErrors.Add("Please enter a height between 20.0cm and 299.9cm (inclusive).");
             if (GenderPicker.SelectedItem == null)
                 registrationErrors.Add("Please select a Gender. This helps fine-tune your maintenance calorie calculation.");
             if (ActivityPicker.SelectedItem == null)
