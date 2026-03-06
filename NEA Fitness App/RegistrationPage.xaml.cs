@@ -76,7 +76,7 @@ namespace NEAFitnessApp
             if (decimal.TryParse(HeightEntry.Text, out decimal heightCheck) || heightCheck < 20.0m || heightCheck > 299.9m)
                 registrationErrors.Add("Please enter a height between 20.0cm and 299.9cm (inclusive).");
             if (GenderPicker.SelectedItem == null)
-                registrationErrors.Add("Please select a Gender. This helps fine-tune your maintenance calorie calculation.");
+                registrationErrors.Add("Please select your Biological Sex. This helps fine-tune your maintenance calorie calculation.");
             if (ActivityPicker.SelectedItem == null)
                 registrationErrors.Add("Please select an Activity Level.");
 
