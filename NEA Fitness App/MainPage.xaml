@@ -60,7 +60,7 @@
                         Text="/"
                         VerticalOptions="Center"/>
                     <Label
-                        x:Name="MaintenanceCalorieLabel"
+                        x:Name="LocalUserMaintenanceGoal"
                         Text="0"
                         VerticalOptions="Center"/>
                     <Label
