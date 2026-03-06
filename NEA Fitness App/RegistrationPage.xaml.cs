@@ -110,19 +110,16 @@ namespace NEAFitnessApp
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var createdUser = await response.Content.ReadFromJsonAsync<RegisterRequest>();
+                    var root = await response.Content.ReadFromJsonAsync<System.Text.Json.JsonElement>();
+                    var userId = root.TryGetProperty("userID", out var tempId) ? tempId.GetInt32() : -1;
 
-                    if (createdUser != null)
-                    {
-                        // Save everything locally:
-                        Preferences.Default.Set("LocalUserMaintenanceGoal", currentCalculatedMaintenance.ToString("F0"));
-                        Preferences.Default.Set("UserName", UsernameEntry.Text);
+                    // Save everything locally:
+                    Preferences.Default.Set("LocalUserMaintenanceGoal", currentCalculatedMaintenance.ToString("F0"));
+                    Preferences.Default.Set("UserName", UsernameEntry.Text);
+                    Preferences.Set("CurrentUserID", userId); // Needed for FoodLog
 
-                        Preferences.Set("CurrentUserID", createdUser.UserID); // Needed for FoodLog
-
-                        await DisplayAlert("Saved", $"Goal: {currentCalculatedMaintenance:F0}", "OK");
-                        Application.Current.MainPage = new AppShell();
-                    }
+                    await DisplayAlert("Saved", $"Goal: {currentCalculatedMaintenance:F0}", "OK");
+                    Application.Current.MainPage = new AppShell();
                 }
                 else
                 {
@@ -132,11 +129,7 @@ namespace NEAFitnessApp
             }
             catch
             {
-                // Don't have a real ID when testing so use -1
-                Preferences.Set("CurrentUserID", -1);
-                // Navigate anyway for testing purposes
-                await DisplayAlert("Offline", "Goal saved locally.", "OK");
-                Application.Current.MainPage = new AppShell();
+                await DisplayAlert("Connection Error", "Could not reach the server. Please try again.", "OK");
             }
         }
     }
