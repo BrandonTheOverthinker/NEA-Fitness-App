@@ -2,7 +2,7 @@
 
 namespace FitnessAppBackend.Models
 {
-    public abstract class Exercise
+    public class Exercise
     {
         [Key]
         public int ExerciseID { get; set; }
@@ -13,18 +13,18 @@ namespace FitnessAppBackend.Models
         [Required, MaxLength(20)]
         public string ExerciseType { get; set; } = string.Empty;
 
-        public abstract string GetSetType();
+        //public abstract string GetSetType();
     }
 
     public class StrengthExercise : Exercise
     {
         public StrengthExercise() => ExerciseType = "Strength";
-        public override string GetSetType() => ExerciseType;
+        //public override string GetSetType() => ExerciseType;
     }
 
     public class CardioExercise : Exercise
     {
         public CardioExercise() => ExerciseType = "Cardio";
-        public override string GetSetType() => ExerciseType;
+        //public override string GetSetType() => ExerciseType;
     }
 }
