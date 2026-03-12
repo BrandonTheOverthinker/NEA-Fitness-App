@@ -7,11 +7,10 @@ namespace NEAFitnessApp;
 
 public partial class FoodLog : ContentPage
 {
-    // The lists for the UI
+    // Lists for the UI:
     public ObservableCollection<FoodItem> AllFoodsDB { get; set; } = new();
     public ObservableCollection<FoodLogEntry> DailyLogs { get; set; } = new();
 
-    // Summary totals
     public string TotalCalories { get; set; } = "0";
     public string TotalProtein { get; set; } = "0";
 
@@ -88,10 +87,9 @@ public partial class FoodLog : ContentPage
         catch (Exception ex) { await DisplayAlert("Error", ex.Message, "OK"); }
     }
 
-    // CREATE NEW FOOD
     private async void OnCreateFoodClicked(object sender, EventArgs e)
     {
-        // ADD EXCEPTION HANDLING HERE
+        // ADD EXCEPTION HANDLING HERE!
         var newFood = new FoodItem
         {
             FoodName = NewFoodNameEntry.Text,
@@ -152,7 +150,7 @@ public partial class FoodLog : ContentPage
             WeeklyAverageDisplay = "Error";
         }
     }
-    private async void OnLogFoodClicked(object sender, EventArgs e)
+    private async void OnLogFoodClicked(object sender, EventArgs e) // LOG NOT CURRENTLY WORKING, FIX BEFORE OR DURING TESTING!
     {
         var button = (Button)sender;
         var selectedFood = (FoodItem)button.CommandParameter;

@@ -11,7 +11,7 @@ namespace FitnessAppBackend.Controllers
         private readonly IWorkoutRepository workoutRepo;
         public WorkoutController(IWorkoutRepository workoutRepo) => this.workoutRepo = workoutRepo;
 
-        // ── DTOs (Records) ────────────────────────────────────────────────────
+        // DTOs (Records)
         // Records are immutable value objects — ideal for API request shapes.
         // The frontend sends JSON matching these shapes.
 
