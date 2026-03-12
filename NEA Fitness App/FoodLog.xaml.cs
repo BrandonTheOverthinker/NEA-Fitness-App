@@ -41,7 +41,7 @@ public partial class FoodLog : ContentPage
         }
     }
 
-    // LOAD ALL FOODS + SORT A-Z
+    // Load foods sorted alphabetically:
     private async Task LoadAllFoods()
     {
         try
@@ -57,7 +57,7 @@ public partial class FoodLog : ContentPage
         catch (Exception ex) { await DisplayAlert("Error", ex.Message, "OK"); }
     }
 
-    // LOAD LOGS FOR SPECIFIC DATE + TOTALS
+    // Load logs for current date with totals:
     private async Task LoadDailyLogs(DateTime date)
     {
         int userId = Preferences.Get("CurrentUserID", 0);
