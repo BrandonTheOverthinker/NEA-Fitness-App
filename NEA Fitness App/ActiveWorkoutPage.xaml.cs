@@ -4,16 +4,15 @@ using System.Text.Json.Serialization;
 
 namespace NEAFitnessApp;
 
-// Lightweight view model for displaying exercises in the CollectionView
 public class WorkoutExerciseViewModel
 {
     public int ExerciseLogId { get; set; }
     public int ExerciseId { get; set; }
     public string ExerciseName { get; set; } = string.Empty;
     public string ExerciseType { get; set; } = string.Empty; // "Strength" or "Cardio"
-    public List<string> SetSummaries { get; set; } = new();   // e.g. ["Set 1: 80kg x 8", "Set 2: 80kg x 6"]
+    public List<string> SetSummaries { get; set; } = new(); // e.g. ["Set 1: 80kg x 8", "Set 2: 80kg x 6"]
 
-    // Displayed as subtitle in the list item
+    // Displayed as subtitle in the list item:
     public string SetSummary => SetSummaries.Count == 0
         ? "No sets logged yet — tap to add"
         : string.Join("  |  ", SetSummaries);
@@ -32,7 +31,7 @@ public partial class ActiveWorkoutPage : ContentPage
     private readonly List<WorkoutExerciseViewModel> _exercises = new();
     private WorkoutExerciseViewModel? _selectedExercise;
 
-    // JSON options: handles polymorphic Exercise responses from the API
+    // JSON handles polymorphic Exercise responses from the API:
     private static readonly JsonSerializerOptions JsonOpts = new()
     {
         PropertyNameCaseInsensitive = true
@@ -51,8 +50,6 @@ public partial class ActiveWorkoutPage : ContentPage
         StartTimer();
     }
 
-    // Timer:
-
     private void StartTimer()
     {
         _timer = Dispatcher.CreateTimer();
@@ -64,7 +61,7 @@ public partial class ActiveWorkoutPage : ContentPage
     private void OnTimerTick(object? sender, EventArgs e)
     {
         _elapsedSeconds++;
-        // Format as MM:SS (switches to HH:MM:SS for long sessions)
+        // Format as MM:SS (switches to HH:MM:SS for long sessions):
         TimerLabel.Text = _elapsedSeconds < 3600
             ? TimeSpan.FromSeconds(_elapsedSeconds).ToString(@"mm\:ss")
             : TimeSpan.FromSeconds(_elapsedSeconds).ToString(@"hh\:mm\:ss");
@@ -72,7 +69,7 @@ public partial class ActiveWorkoutPage : ContentPage
 
     private async void OnAddExerciseClicked(object sender, EventArgs e)
     {
-        // Give the user two options: pick from their library, or create a new exercise
+        // Give the user two options - pick from their library, or create a new exercise:
         string action = await DisplayActionSheet(
             "Add Exercise",
             "Cancel",
@@ -83,8 +80,11 @@ public partial class ActiveWorkoutPage : ContentPage
         if (action == "Choose from my library")
             await PickFromLibrary();
         else if (action == "Create new exercise")
+        {
+            // Push the create page, then open the library picker when it returns automatically:
             await Navigation.PushAsync(new CreateExercisePage(_userId));
-        // After returning from CreateExercisePage, user can then pick the new exercise from library
+            await PickFromLibrary();
+        }
     }
 
     private async Task PickFromLibrary()
@@ -94,7 +94,13 @@ public partial class ActiveWorkoutPage : ContentPage
             var client = new HttpClient();
             var response = await client.GetAsync($"{BaseUrl}/exercises/user/{_userId}");
 
-            if (!response.IsSuccessStatusCode) return;
+            // Show a clear error if the request fails rather than silently returning:
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                await DisplayAlert("Error", $"Could not load exercises: {error}", "OK");
+                return;
+            }
 
             var json = await response.Content.ReadAsStringAsync();
             var exercises = JsonSerializer.Deserialize<List<ExerciseDto>>(json, JsonOpts);
@@ -105,7 +111,6 @@ public partial class ActiveWorkoutPage : ContentPage
                 return;
             }
 
-            // Show picker as action sheet
             var names = exercises.Select(e => e.ExerciseName).ToArray();
             string? picked = await DisplayActionSheet("Choose Exercise", "Cancel", null, names);
 
@@ -152,10 +157,15 @@ public partial class ActiveWorkoutPage : ContentPage
                         ExerciseType = exercise.ExerciseType
                     };
                     _exercises.Add(vm);
-                    // Refresh CollectionView
+                    // Refresh CollectionView:
                     ExercisesCollectionView.ItemsSource = null;
                     ExercisesCollectionView.ItemsSource = _exercises;
                 }
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                await DisplayAlert("Error", $"Could not add exercise to workout: {error}", "OK");
             }
         }
         catch (Exception ex)
@@ -174,13 +184,12 @@ public partial class ActiveWorkoutPage : ContentPage
         SetLoggerFrame.IsVisible = true;
         SetErrorLabel.IsVisible = false;
 
-        // Polymorphic UI: show the correct fields based on exercise type
+        // Polymorphic UI that shows the correct fields based on exercise type:
         StrengthFields.IsVisible = selected.ExerciseType == "Strength";
         CardioFields.IsVisible = selected.ExerciseType == "Cardio";
 
-        // Clear previous entries
-        WeightEntry.Text = RepsEntry.Text = DistanceEntry.Text =
-            TimeEntry.Text = RpeEntry.Text = string.Empty;
+        // Clear previous entries:
+        WeightEntry.Text = RepsEntry.Text = DistanceEntry.Text = TimeEntry.Text = RpeEntry.Text = string.Empty;
     }
 
     private async void OnLogSetClicked(object sender, EventArgs e)
@@ -191,7 +200,7 @@ public partial class ActiveWorkoutPage : ContentPage
         int setNumber = _selectedExercise.SetSummaries.Count + 1;
         bool isStrength = _selectedExercise.ExerciseType == "Strength";
 
-        // Parse and validate inputs based on exercise type
+        // Parse and validate inputs based on exercise type:
         decimal weight = 0; int reps = 0, distance = 0, time = 0;
         decimal rpe = 0;
 
@@ -244,12 +253,13 @@ public partial class ActiveWorkoutPage : ContentPage
                 ExercisesCollectionView.ItemsSource = null;
                 ExercisesCollectionView.ItemsSource = _exercises;
 
-                // Clear entries for next set:
-                WeightEntry.Text = RepsEntry.Text = DistanceEntry.Text = TimeEntry.Text = RpeEntry.Text = string.Empty;
+                // Clear inputs ready for next set:
+                WeightEntry.Text = RepsEntry.Text = DistanceEntry.Text =
+                    TimeEntry.Text = RpeEntry.Text = string.Empty;
             }
             else
             {
-                ShowSetError("Failed to save set.");
+                ShowSetError("Failed to save set. Try again.");
             }
         }
         catch (Exception ex)
@@ -263,8 +273,6 @@ public partial class ActiveWorkoutPage : ContentPage
         SetErrorLabel.Text = message;
         SetErrorLabel.IsVisible = true;
     }
-
-    // Finish Workout:
 
     private async void OnFinishWorkoutClicked(object sender, EventArgs e)
     {
@@ -288,11 +296,12 @@ public partial class ActiveWorkoutPage : ContentPage
         }
         catch { /* Non-critical - timer saved best effort */ }
 
-        // Navigate back to WorkoutLog and clear the active workout from the stack:
+        // Navigate back to WorkoutLog, clearing the active workout from the nav stack
         await Shell.Current.GoToAsync("//WorkoutLog");
     }
 
-    // Data Transfer Objects (DTOs) for API responses:
+    // Data Transfer Objects (Dtos) for API responses:
+
     private class ExerciseDto
     {
         [JsonPropertyName("exerciseID")]
