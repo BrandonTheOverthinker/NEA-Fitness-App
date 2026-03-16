@@ -86,6 +86,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="ActiveWorkoutPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="CreateExercisePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="ExerciseHistoryPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="FoodLog.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
