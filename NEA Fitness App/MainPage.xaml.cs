@@ -15,7 +15,7 @@
 
             if (storedGoal != "Not Set" && decimal.TryParse(storedGoal, out decimal goalValue))
             {
-                MaintenanceCalorieLabel.Text = goalValue.ToString("F0");
+                LocalUserMaintenanceGoal.Text = goalValue.ToString("F0");
 
                 decimal current = 0m;
                 CurrentCaloriesLabel.Text = current.ToString("F0");
@@ -27,7 +27,7 @@
             }
             else
             {
-                MaintenanceCalorieLabel.Text = "Not Set";
+                LocalUserMaintenanceGoal.Text = "Not Set";
             }
 
             XpDisplay.Text = "0";

@@ -52,7 +52,7 @@
                     TextColor="#212121"
                     BackgroundColor="#41c146"/>
                 <Label
-                    Text="Select Gender"
+                    Text="Biological Sex"
                     HorizontalOptions="Center"
                     Grid.Column="2"
                     Grid.Row="0"/>

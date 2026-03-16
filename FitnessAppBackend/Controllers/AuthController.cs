@@ -40,7 +40,15 @@ namespace FitnessAppBackend.Controllers
 
             // Save by using the Repository:
             await userRepo.CreateUserAsync(newUser);
-            return Ok("-> User registered successfully.");
+            return Ok(new
+            {
+                newUser.UserID,
+                newUser.UserName,
+                newUser.MaintenanceGoal,
+                Message = "User registered successfully."
+            });
+
+
         }
 
         [HttpPost("login")]

@@ -7,11 +7,10 @@ namespace NEAFitnessApp;
 
 public partial class FoodLog : ContentPage
 {
-    // The lists for the UI
+    // Lists for the UI:
     public ObservableCollection<FoodItem> AllFoodsDB { get; set; } = new();
     public ObservableCollection<FoodLogEntry> DailyLogs { get; set; } = new();
 
-    // Summary totals
     public string TotalCalories { get; set; } = "0";
     public string TotalProtein { get; set; } = "0";
 
@@ -41,7 +40,7 @@ public partial class FoodLog : ContentPage
         }
     }
 
-    // LOAD ALL FOODS + SORT A-Z
+    // Load foods sorted alphabetically:
     private async Task LoadAllFoods()
     {
         try
@@ -57,7 +56,7 @@ public partial class FoodLog : ContentPage
         catch (Exception ex) { await DisplayAlert("Error", ex.Message, "OK"); }
     }
 
-    // LOAD LOGS FOR SPECIFIC DATE + TOTALS
+    // Load logs for current date with totals:
     private async Task LoadDailyLogs(DateTime date)
     {
         int userId = Preferences.Get("CurrentUserID", 0);
@@ -88,9 +87,9 @@ public partial class FoodLog : ContentPage
         catch (Exception ex) { await DisplayAlert("Error", ex.Message, "OK"); }
     }
 
-    // CREATE NEW FOOD
     private async void OnCreateFoodClicked(object sender, EventArgs e)
     {
+        // ADD EXCEPTION HANDLING HERE!
         var newFood = new FoodItem
         {
             FoodName = NewFoodNameEntry.Text,
@@ -117,7 +116,7 @@ public partial class FoodLog : ContentPage
         set
         {
             _weeklyAverageDisplay = value;
-            OnPropertyChanged(); // This tells the XAML to refresh the label
+            OnPropertyChanged(); // Refresh XAML label
         }
     }
     private async Task CalculateWeeklyAverage()
@@ -125,25 +124,20 @@ public partial class FoodLog : ContentPage
         int userId = Preferences.Get("CurrentUserID", 0);
         if (userId <= 0) return;
 
-        // We want the average for the LAST 7 days ending today
+        // Get average for the last 7 days ending today:
         DateTime startDate = DateTime.Today.AddDays(-7);
 
         try
         {
-            // 1. Fetch the data from new controller endpoint
+            
             var response = await _httpClient.GetFromJsonAsync<List<FoodLogEntry>>(
-                $"api/food/weekly/{userId}/{startDate:yyyy-MM-dd}");
+                $"api/food/weekly/{userId}/{startDate:yyyy-MM-dd}"); // Fetch data from controller endpoint
 
             if (response != null && response.Count > 0)
             {
-                // 2. Sum up all calories from all logs in that period
                 decimal totalCalories = response.Sum(log => log.FoodItem.Calories);
-
-                // 3. Divide by 7 to get the daily average
                 decimal average = totalCalories / 7;
-
-                // 4. Update the UI property (F0 removes decimals for a cleaner look)
-                WeeklyAverageDisplay = average.ToString("F0");
+                WeeklyAverageDisplay = average.ToString("F0"); // Update the UI property to 0 dp
             }
             else
             {
@@ -156,7 +150,7 @@ public partial class FoodLog : ContentPage
             WeeklyAverageDisplay = "Error";
         }
     }
-    private async void OnLogFoodClicked(object sender, EventArgs e)
+    private async void OnLogFoodClicked(object sender, EventArgs e) // LOG NOT CURRENTLY WORKING, FIX BEFORE OR DURING TESTING!
     {
         var button = (Button)sender;
         var selectedFood = (FoodItem)button.CommandParameter;
@@ -186,7 +180,6 @@ public partial class FoodLog : ContentPage
 
             if (response.IsSuccessStatusCode)
             {
-                // Refresh the daily logs and the weekly average to show the new data
                 await LoadDailyLogs(DateTime.Today);
                 await CalculateWeeklyAverage();
 
