@@ -28,8 +28,7 @@ namespace FitnessAppBackend.Controllers
             int Reps,
             decimal SetWeightKG,
             int DistanceM,
-            int TimeSeconds,
-            decimal RPE
+            int TimeSeconds
         );
 
         // Exercise Library Endpoints:
@@ -137,8 +136,7 @@ namespace FitnessAppBackend.Controllers
                 Reps = request.Reps,
                 SetWeightKG = request.SetWeightKG,
                 DistanceM = request.DistanceM,
-                TimeSeconds = request.TimeSeconds,
-                RPE = request.RPE
+                TimeSeconds = request.TimeSeconds
             };
 
             var created = await workoutRepo.LogSetAsync(set);

@@ -154,18 +154,6 @@
                         </Grid>
                     </VerticalStackLayout>
 
-                    <!-- RPE (shown for both types): -->
-                    <VerticalStackLayout
-                        Spacing="4">
-                        <Label
-                            Text="RPE (1–10, optional)"
-                            FontSize="13" />
-                        <Entry
-                            x:Name="RpeEntry"
-                            Placeholder="0"
-                            Keyboard="Numeric" />
-                    </VerticalStackLayout>
-
                     <Label
                         x:Name="SetErrorLabel"
                         FontSize="13"
