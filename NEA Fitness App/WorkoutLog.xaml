@@ -1,53 +1,50 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="NEAFitnessApp.WorkoutLog"
-             Title="Workout Log"
-             BackgroundColor="#212121">
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="NEAFitnessApp.WorkoutLog"
+    Title="Workout Log">
 
     <ScrollView>
-        <VerticalStackLayout Padding="24" Spacing="20">
+        <VerticalStackLayout
+            Padding="24"
+            Spacing="20">
 
             <Label
                 Text="Workout Log"
                 Style="{StaticResource Headline}" />
 
-            <!-- My Exercise Library -->
+            <!-- My Exercise Library header row: -->
             <Grid
                 ColumnDefinitions="*,Auto">
                 <Label
                     Text="My Exercises"
                     Style="{StaticResource SubHeadline}"
-                    Grid.Column="0"/>
+                    Grid.Column="0" />
                 <Button
                     Text="+ New Exercise"
-                    BackgroundColor="Transparent"
-                    TextColor="#4CAF50"
                     FontSize="13"
                     Padding="0"
                     Grid.Column="1"
-                    Clicked="OnCreateExerciseClicked"/>
+                    Clicked="OnCreateExerciseClicked" />
             </Grid>
 
-            <!-- Search bar for personal library -->
+            <!-- Search bar for personal library: -->
             <SearchBar
                 x:Name="ExerciseSearchBar"
                 Placeholder="Search exercises..."
-                PlaceholderColor="#666666"
-                TextColor="White"
-                BackgroundColor="#2E2E2E"
-                TextChanged="OnSearchTextChanged"/>
+                TextChanged="OnSearchTextChanged" />
 
-            <!-- Personal library list -->
+            <!-- Personal library list: -->
             <CollectionView
                 x:Name="ExerciseLibraryView"
                 HeightRequest="260"
                 EmptyView="No exercises yet. Create one above.">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Frame
-                            BackgroundColor="#2E2E2E"
-                            CornerRadius="8" Padding="12"
+                        <Border
+                            StrokeShape="RoundRectangle 8"
+                            Padding="12"
                             Margin="0,3">
                             <Grid
                                 ColumnDefinitions="*,Auto">
@@ -56,81 +53,65 @@
                                     Spacing="2">
                                     <Label
                                         Text="{Binding ExerciseName}"
-                                        TextColor="White"
                                         FontSize="15"
-                                        FontAttributes="Bold"/>
+                                        FontAttributes="Bold" />
                                     <Label
                                         Text="{Binding ExerciseType}"
-                                        TextColor="#AAAAAA"
-                                        FontSize="12"/>
+                                        FontSize="12" />
                                 </VerticalStackLayout>
-                                <!-- Tap to view history -->
                                 <Button
                                     Text="History"
                                     Grid.Column="1"
-                                    BackgroundColor="Transparent"
-                                    TextColor="#4CAF50"
                                     FontSize="12"
                                     Padding="4,0"
                                     CommandParameter="{Binding .}"
-                                    Clicked="OnViewHistoryClicked"/>
+                                    Clicked="OnViewHistoryClicked" />
                             </Grid>
-                        </Frame>
+                        </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-            <!-- Divider -->
             <BoxView
                 HeightRequest="1"
-                Color="#333333"
-                Margin="0,8"/>
+                Margin="0,8" />
 
-            <!-- Start Workout -->
+            <!-- Start Workout section: -->
             <Label
-                Text="Start New Workout"
-                Style="{StaticResource SubHeadline}"/>
+                Text="Start a Workout"
+                Style="{StaticResource SubHeadline}" />
 
             <VerticalStackLayout
                 Spacing="10">
                 <Label
                     Text="Workout Name"
-                    TextColor="#CCCCCC" FontSize="14"/>
+                    FontSize="14" />
                 <Entry
                     x:Name="WorkoutNameEntry"
                     Placeholder="e.g. Push Day"
-                    PlaceholderColor="#666666"
-                    TextColor="White"
-                    BackgroundColor="#2E2E2E"
-                    MaxLength="100"/>
+                    MaxLength="100" />
             </VerticalStackLayout>
 
             <VerticalStackLayout
                 Spacing="10">
                 <Label
                     Text="Notes (optional)"
-                    TextColor="#CCCCCC" FontSize="14"/>
+                    FontSize="14" />
                 <Entry
                     x:Name="WorkoutNotesEntry"
                     Placeholder="Any notes..."
-                    PlaceholderColor="#666666"
-                    TextColor="White"
-                    BackgroundColor="#2E2E2E"
-                    MaxLength="500"/>
+                    MaxLength="500" />
             </VerticalStackLayout>
 
             <Label
                 x:Name="StartErrorLabel"
-                TextColor="#FF6B6B"
                 FontSize="13"
-                IsVisible="False"/>
+                IsVisible="False" />
 
             <Button
                 Text="Start Workout"
-                BackgroundColor="#4CAF50"
-                TextColor="White"
                 CornerRadius="8"
-                Clicked="OnStartWorkoutClicked"/>
+                Clicked="OnStartWorkoutClicked" />
 
         </VerticalStackLayout>
     </ScrollView>
