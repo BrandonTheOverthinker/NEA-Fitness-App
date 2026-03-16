@@ -6,8 +6,8 @@ namespace NEAFitnessApp;
 
 public partial class WorkoutLog : ContentPage
 {
-    // TODO: replace with real session/auth system (same pattern as food log pages)
-    private const int CurrentUserId = 1;
+    // I read the CurrentUserID from Preferences - set during login/registration, same as FoodLog.xaml.cs:
+    private int CurrentUserId => Preferences.Get("CurrentUserID", 0);
     private const string BaseUrl = "https://localhost:7281/api/workout";
 
     private List<ExerciseItem> _allExercises = new();
@@ -70,6 +70,14 @@ public partial class WorkoutLog : ContentPage
     private async void OnStartWorkoutClicked(object sender, EventArgs e)
     {
         StartErrorLabel.IsVisible = false;
+
+        // Guard to ensure the user is logged in before trying to write to DB:
+        if (CurrentUserId == 0)
+        {
+            StartErrorLabel.Text = "User session not found. Please log in again.";
+            StartErrorLabel.IsVisible = true;
+            return;
+        }
 
         if (string.IsNullOrWhiteSpace(WorkoutNameEntry.Text))
         {
