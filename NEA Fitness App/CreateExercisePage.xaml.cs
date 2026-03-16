@@ -5,14 +5,14 @@ namespace NEAFitnessApp;
 
 public partial class CreateExercisePage : ContentPage
 {
-    private readonly int userId;
+    private readonly int _userId;
     private const string BaseUrl = "https://localhost:7281/api/workout";
 
-    // The page accepts the current UserId so it can link the new exercise to their library:
+    // Page accepts the current userId so it can link the new exercise to their library:
     public CreateExercisePage(int userId)
     {
         InitializeComponent();
-        userId = this.userId;
+        _userId = userId;
     }
 
     // Update the hint label when the user changes the exercise type picker:
@@ -30,6 +30,14 @@ public partial class CreateExercisePage : ContentPage
     private async void OnSaveClicked(object sender, EventArgs e)
     {
         ErrorLabel.IsVisible = false;
+
+        // Guard to ensure a real user ID was passed in before writing to DB:
+        if (_userId == 0)
+        {
+            ErrorLabel.Text = "User session not found. Please log in again.";
+            ErrorLabel.IsVisible = true;
+            return;
+        }
 
         // Validation:
         if (string.IsNullOrWhiteSpace(ExerciseNameEntry.Text))
@@ -50,7 +58,7 @@ public partial class CreateExercisePage : ContentPage
         {
             ExerciseName = ExerciseNameEntry.Text.Trim(),
             ExerciseType = ExerciseTypePicker.SelectedItem.ToString(),
-            UserId = userId
+            UserId = _userId
         };
 
         try
