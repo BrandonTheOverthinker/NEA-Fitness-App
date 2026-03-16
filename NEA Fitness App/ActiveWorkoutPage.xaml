@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NEAFitnessApp.ActiveWorkoutPage"
+             Title="Active Workout"
+             BackgroundColor="#212121">
+
+    <Shell.BackButtonBehavior>
+        <!-- Prevent accidental back-navigation mid-workout -->
+        <BackButtonBehavior
+            IsVisible="False"
+            IsEnabled="False" />
+    </Shell.BackButtonBehavior>
+
+    <ScrollView>
+        <VerticalStackLayout
+            Padding="24"
+            Spacing="16">
+
+            <!-- Header: workout name + timer -->
+            <Grid
+                ColumnDefinitions="*,Auto">
+                <Label
+                    x:Name="WorkoutNameLabel"
+                    Text="Workout"
+                    Style="{StaticResource Headline}"
+                    Grid.Column="0" />
+                <VerticalStackLayout
+                    Grid.Column="1"
+                    HorizontalOptions="End">
+                    <Label
+                        Text="Duration"
+                        TextColor="#AAAAAA"
+                        FontSize="12"
+                        HorizontalTextAlignment="Center" />
+                    <Label
+                        x:Name="TimerLabel"
+                        Text="00:00"
+                        FontSize="22"
+                        FontAttributes="Bold"
+                        TextColor="#4CAF50"
+                        HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </Grid>
+
+            <!-- Logged exercises list -->
+            <CollectionView
+                x:Name="ExercisesCollectionView"
+                SelectionMode="Single"
+                SelectionChanged="OnExerciseSelected">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame
+                            BackgroundColor="#2E2E2E"
+                            CornerRadius="8"
+                            Padding="12"
+                            Margin="0,4">
+                            <VerticalStackLayout
+                                Spacing="4">
+                                <Label
+                                    Text="{Binding ExerciseName}"
+                                    TextColor="White"
+                                    FontSize="16"
+                                    FontAttributes="Bold" />
+                                <Label
+                                    Text="{Binding SetSummary}"
+                                    TextColor="#AAAAAA"
+                                    FontSize="13" />
+                            </VerticalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Add Exercise Button -->
+            <Button
+                Text="+ Add Exercise"
+                BackgroundColor="#333333"
+                TextColor="#4CAF50"
+                BorderColor="#4CAF50"
+                BorderWidth="1"
+                CornerRadius="8"
+                Clicked="OnAddExerciseClicked" />
+
+            <!-- Set Logger (shown after selecting an exercise) -->
+            <Frame
+                x:Name="SetLoggerFrame"
+                BackgroundColor="#2A2A2A"
+                CornerRadius="10"
+                Padding="16"
+                IsVisible="False">
+
+                <VerticalStackLayout
+                    Spacing="12">
+
+                    <Label
+                        x:Name="SelectedExerciseLabel"
+                        TextColor="White"
+                        FontSize="16"
+                        FontAttributes="Bold" />
+
+                    <!-- Strength fields (weight + reps) -->
+                    <VerticalStackLayout
+                        x:Name="StrengthFields"
+                        Spacing="10"
+                        IsVisible="False">
+                        <Grid
+                            ColumnDefinitions="*,*"
+                            ColumnSpacing="12">
+                            <VerticalStackLayout
+                                Grid.Column="0"
+                                Spacing="4">
+                                <Label
+                                    Text="Weight (kg)"
+                                    TextColor="#CCCCCC"
+                                    FontSize="13" />
+                                <Entry
+                                    x:Name="WeightEntry"
+                                    Placeholder="0.0"
+                                    Keyboard="Numeric"
+                                    TextColor="White"
+                                    BackgroundColor="#3A3A3A"
+                                    PlaceholderColor="#666" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout
+                                Grid.Column="1"
+                                Spacing="4">
+                                <Label
+                                    Text="Reps"
+                                    TextColor="#CCCCCC"
+                                    FontSize="13" />
+                                <Entry
+                                    x:Name="RepsEntry"
+                                    Placeholder="0"
+                                    Keyboard="Numeric"
+                                    TextColor="White"
+                                    BackgroundColor="#3A3A3A"
+                                    PlaceholderColor="#666" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <!-- Cardio fields (distance + time) -->
+                    <VerticalStackLayout
+                        x:Name="CardioFields"
+                        Spacing="10"
+                        IsVisible="False">
+                        <Grid
+                            ColumnDefinitions="*,*"
+                            ColumnSpacing="12">
+                            <VerticalStackLayout
+                                Grid.Column="0"
+                                Spacing="4">
+                                <Label
+                                    Text="Distance (m)"
+                                    TextColor="#CCCCCC"
+                                    FontSize="13" />
+                                <Entry
+                                    x:Name="DistanceEntry"
+                                    Placeholder="0"
+                                    Keyboard="Numeric"
+                                    TextColor="White"
+                                    BackgroundColor="#3A3A3A"
+                                    PlaceholderColor="#666" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout
+                                Grid.Column="1"
+                                Spacing="4">
+                                <Label
+                                    Text="Time (seconds)"
+                                    TextColor="#CCCCCC"
+                                    FontSize="13" />
+                                <Entry
+                                    x:Name="TimeEntry"
+                                    Placeholder="0"
+                                    Keyboard="Numeric"
+                                    TextColor="White"
+                                    BackgroundColor="#3A3A3A"
+                                    PlaceholderColor="#666" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <!-- RPE (shown for both types) -->
+                    <VerticalStackLayout
+                        Spacing="4">
+                        <Label
+                            Text="RPE (1–10, optional)"
+                            TextColor="#CCCCCC"
+                            FontSize="13" />
+                        <Entry
+                            x:Name="RpeEntry"
+                            Placeholder="0"
+                            Keyboard="Numeric"
+                            TextColor="White"
+                            BackgroundColor="#3A3A3A"
+                            PlaceholderColor="#666" />
+                    </VerticalStackLayout>
+
+                    <Label
+                        x:Name="SetErrorLabel"
+                        TextColor="#FF6B6B"
+                        FontSize="13"
+                        IsVisible="False" />
+
+                    <Button
+                        Text="Log Set"
+                        BackgroundColor="#4CAF50"
+                        TextColor="White"
+                        CornerRadius="8"
+                        Clicked="OnLogSetClicked" />
+
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Finish Workout -->
+            <Button
+                Text="Finish Workout"
+                BackgroundColor="#FF5252"
+                TextColor="White"
+                CornerRadius="8"
+                Margin="0,16,0,0"
+                Clicked="OnFinishWorkoutClicked" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
