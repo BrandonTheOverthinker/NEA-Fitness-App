@@ -16,7 +16,6 @@ namespace FitnessAppBackend.Controllers
         // DTOs (Records)
         // Records are immutable value objects — ideal for API request shapes.
         // The frontend sends JSON matching these shapes.
-
         public record CreateExerciseRequest(string ExerciseName, string ExerciseType, int UserId);
         public record AddToLibraryRequest(int UserId, int ExerciseId);
         public record StartWorkoutRequest(int UserId, string WorkoutName, string WorkoutNotes);
@@ -73,7 +72,7 @@ namespace FitnessAppBackend.Controllers
             return Ok();
         }
 
-        // ── Workout Endpoints ─────────────────────────────────────────────────
+        // Workout Endpoints:
 
         // POST api/workout/start
         // Creates a new Workout row; frontend uses the returned WorkoutID for the session
