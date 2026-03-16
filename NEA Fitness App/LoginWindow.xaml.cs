@@ -1,7 +1,7 @@
 namespace NEAFitnessApp;
 
 using System.Net.Http.Json;
-using NEAFitnessApp.Models;
+using NEAFitnessApp.Models; // Access to RegisterRequest.cs
 
 public partial class LoginWindow : ContentPage
 {
@@ -21,7 +21,7 @@ public partial class LoginWindow : ContentPage
         var loginData = new RegisterRequest { UserName = UsernameEntry.Text, Password = PasswordEntry.Text };
 
         using var client = new HttpClient();
-        var url = "https://localhost:7281/api/auth/login";
+        string url = "https://localhost:7281/api/auth/login";
 
         try
         {
@@ -29,18 +29,20 @@ public partial class LoginWindow : ContentPage
 
             if (response.IsSuccessStatusCode)
             {
-                // Use JsonElement to safely parse the response without needing a User class
+                // Parse the JSON response the same way as RegistrationPage.xaml.cs:
                 var root = await response.Content.ReadFromJsonAsync<System.Text.Json.JsonElement>();
 
-                // Safely extract the maintenanceGoal if it exists in the JSON
+                // Save the userID so all pages (food log, workout log etc.) can use it:
+                if (root.TryGetProperty("userID", out var idProperty))
+                    Preferences.Set("CurrentUserID", idProperty.GetInt32());
+
+                // Save maintenance goal and username for the home page:
                 if (root.TryGetProperty("maintenanceGoal", out var goalProperty))
-                {
-                    string goalValue = goalProperty.ToString();
-                    Preferences.Default.Set("LocalUserMaintenanceGoal", goalValue);
-                }
+                    Preferences.Default.Set("LocalUserMaintenanceGoal", goalProperty.ToString());
 
                 Preferences.Default.Set("UserName", UsernameEntry.Text);
 
+                // Open the main app shell and close the login window:
                 if (Application.Current != null)
                 {
                     Application.Current.OpenWindow(new Window(new AppShell()));
@@ -49,12 +51,12 @@ public partial class LoginWindow : ContentPage
             }
             else
             {
-                await DisplayAlert("Login failed", "Invalid credentials", "OK");
+                await DisplayAlert("Login failed", "Invalid Username or Password.", "OK");
             }
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", "Login Error: " + ex.Message, "OK");
+            await DisplayAlert("Connection Error", "Is the backend running? " + ex.Message, "OK");
         }
     }
 
