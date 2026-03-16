@@ -1,5 +1,7 @@
-﻿using FitnessAppBackend.Interfaces;
+﻿using Azure.Core;
+using FitnessAppBackend.Interfaces;
 using FitnessAppBackend.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessAppBackend.Controllers
@@ -16,13 +18,14 @@ namespace FitnessAppBackend.Controllers
         // The frontend sends JSON matching these shapes.
 
         public record CreateExerciseRequest(string ExerciseName, string ExerciseType, int UserId);
+        public record AddToLibraryRequest(int UserId, int ExerciseId);
         public record StartWorkoutRequest(int UserId, string WorkoutName, string WorkoutNotes);
         public record FinishWorkoutRequest(int DurationSeconds);
         public record LogExerciseRequest(int WorkoutId, int UserId, int ExerciseId, string ExerciseNotes);
         public record LogSetRequest(
             int ExerciseLogId,
             int SetNumber,
-            string SetType, // "Strength" or "Cardio"
+            string SetType,        // "Strength" or "Cardio"
             int Reps,
             decimal SetWeightKG,
             int DistanceM,
@@ -30,52 +33,50 @@ namespace FitnessAppBackend.Controllers
             decimal RPE
         );
 
+        // Exercise Library Endpoints:
+
         // GET api/workout/exercises/all
+        // Returns the full global exercise library (all users can see)
         [HttpGet("exercises/all")]
         public async Task<IActionResult> GetAllExercises() =>
             Ok(await workoutRepo.GetAllExercisesAsync());
 
         // GET api/workout/exercises/user/{userId}
+        // Returns only the exercises in a user's personal library
         [HttpGet("exercises/user/{userId}")]
         public async Task<IActionResult> GetUserExercises(int userId) =>
             Ok(await workoutRepo.GetUserExercisesAsync(userId));
 
         // POST api/workout/exercises/create
+        // Creates a new exercise in the global DB and adds it to the user's library
         [HttpPost("exercises/create")]
         public async Task<IActionResult> CreateExercise([FromBody] CreateExerciseRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.ExerciseName) || request.ExerciseName.Length > 50)
                 return BadRequest("Exercise name is required and must be 50 characters or fewer.");
 
-            Exercise exercise;
-            if (request.ExerciseType == "Strength")
-            {
-                exercise = new StrengthExercise { ExerciseName = request.ExerciseName };
-            }
-            else if (request.ExerciseType == "Cardio")
-            {
-                exercise = new CardioExercise { ExerciseName = request.ExerciseName };
-            }
-            else
-            {
-                return BadRequest("ExerciseType must be 'Strength' or 'Cardio'.");
-            }
+            // Polymorphism in action: we instantiate the correct subclass based on ExerciseType
+            Exercise exercise = request.ExerciseType == "Strength"
+                ? new StrengthExercise { ExerciseName = request.ExerciseName }
+                : new CardioExercise { ExerciseName = request.ExerciseName };
 
             var created = await workoutRepo.CreateExerciseAsync(exercise, request.UserId);
             return Ok(created);
         }
 
         // POST api/workout/exercises/add-to-library
-        // Add existing global exercise to user's personal library:
+        // Adds an existing global exercise to the user's personal library
         [HttpPost("exercises/add-to-library")]
-        public async Task<IActionResult> AddToLibrary([FromBody] (int UserId, int ExerciseId) request)
+        public async Task<IActionResult> AddToLibrary([FromBody] AddToLibraryRequest request)
         {
             await workoutRepo.AddExerciseToUserLibraryAsync(request.UserId, request.ExerciseId);
             return Ok();
         }
 
+        // ── Workout Endpoints ─────────────────────────────────────────────────
+
         // POST api/workout/start
-        // Create new Workout row:
+        // Creates a new Workout row; frontend uses the returned WorkoutID for the session
         [HttpPost("start")]
         public async Task<IActionResult> StartWorkout([FromBody] StartWorkoutRequest request)
         {
@@ -94,7 +95,7 @@ namespace FitnessAppBackend.Controllers
         }
 
         // PATCH api/workout/{workoutId}/finish
-        // Save final duration when user ends the session:
+        // Saves the final duration when the user ends the session
         [HttpPatch("{workoutId}/finish")]
         public async Task<IActionResult> FinishWorkout(int workoutId, [FromBody] FinishWorkoutRequest request)
         {
@@ -104,6 +105,8 @@ namespace FitnessAppBackend.Controllers
             await workoutRepo.FinishWorkoutAsync(workoutId, request.DurationSeconds);
             return Ok();
         }
+
+        // Exercise Log Endpoints:
 
         // POST api/workout/log-exercise
         // Adds an exercise to an active workout (creates an ExerciseLog row)
@@ -143,8 +146,10 @@ namespace FitnessAppBackend.Controllers
             return Ok(created);
         }
 
+        // Analytics Endpoints:
+
         // GET api/workout/history/{userId}/{exerciseId}
-        // Return all ExerciseLogs (with nested Sets) for one exercise:
+        // Returns all ExerciseLogs (with nested Sets) for one exercise - used for the chart + table
         [HttpGet("history/{userId}/{exerciseId}")]
         public async Task<IActionResult> GetExerciseHistory(int userId, int exerciseId)
         {
@@ -153,7 +158,7 @@ namespace FitnessAppBackend.Controllers
         }
 
         // GET api/workout/sets/{exerciseLogId}
-        // Return all sets for a specific log entry:
+        // Returns all sets for a specific log entry
         [HttpGet("sets/{exerciseLogId}")]
         public async Task<IActionResult> GetSetsForLog(int exerciseLogId)
         {
