@@ -19,10 +19,14 @@ namespace NEAFitnessApp
     		builder.Logging.AddDebug();
 #endif
 
-            // Register pages / viewmodels if needed:
-            builder.Services.AddTransient<NEAFitnessApp.FoodLog>();
+            // Register pages:
+            builder.Services.AddTransient<FoodLog>();
+            builder.Services.AddTransient<WorkoutLog>();
+            builder.Services.AddTransient<CreateExercisePage>();
+            builder.Services.AddTransient<ActiveWorkoutPage>();
+            builder.Services.AddTransient<ExerciseHistoryPage>();
 
-            
+
             return builder.Build();
         }
     }
