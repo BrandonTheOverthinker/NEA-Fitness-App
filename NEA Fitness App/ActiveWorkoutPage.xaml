@@ -17,7 +17,7 @@
             Padding="24"
             Spacing="16">
 
-            <!-- Header: workout name + timer: -->
+            <!-- Header: workout name + timer -->
             <Grid
                 ColumnDefinitions="*,Auto">
                 <Label
@@ -41,7 +41,7 @@
                 </VerticalStackLayout>
             </Grid>
 
-            <!-- Logged exercises list: -->
+            <!-- Logged exercises list -->
             <CollectionView
                 x:Name="ExercisesCollectionView"
                 SelectionMode="Single"
@@ -67,13 +67,12 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-            <!-- Add Exercise Button: -->
             <Button
                 Text="+ Add Exercise"
                 CornerRadius="8"
                 Clicked="OnAddExerciseClicked" />
 
-            <!-- Set Logger (shown after selecting an exercise): -->
+            <!-- Set Logger (shown after selecting an exercise) -->
             <Border
                 x:Name="SetLoggerFrame"
                 StrokeShape="RoundRectangle 10"
@@ -88,7 +87,7 @@
                         FontSize="16"
                         FontAttributes="Bold" />
 
-                    <!-- Strength fields (weight + reps): -->
+                    <!-- Strength fields (weight + reps) -->
                     <VerticalStackLayout
                         x:Name="StrengthFields"
                         Spacing="10"
@@ -121,7 +120,7 @@
                         </Grid>
                     </VerticalStackLayout>
 
-                    <!-- Cardio fields (distance + time): -->
+                    <!-- Cardio fields (distance + time) -->
                     <VerticalStackLayout
                         x:Name="CardioFields"
                         Spacing="10"
@@ -163,11 +162,33 @@
                         Text="Log Set"
                         CornerRadius="8"
                         Clicked="OnLogSetClicked" />
+                    
+                    <!-- Rest Timer Panel (shown automatically after a set is logged) -->
+                    <Border
+                        x:Name="RestTimerPanel"
+                        Padding="16"
+                        IsVisible="false">
+                        <VerticalStackLayout
+                            Spacing="10"/>
+                            <Label
+                                Text="Rest Timer"
+                                FontAttributes="Bold"
+                                HorizontalTextAlignment="Center" />
+                            <Label
+                                x:Name="RestTimerLabel"
+                                Text="00:00"
+                                FontSize="36"
+                                FontAttributes="Bold"
+                                HorizontalTextAlignment="Center"/>
+                            <Label
+                                Text="Skip Rest"
+                                Clicked="OnSkipRestClicked"/>
+                        <VerticalStackLayout/>
+                    </Border>
 
                 </VerticalStackLayout>
             </Border>
-
-            <!-- Finish Workout: -->
+            
             <Button
                 Text="Finish Workout"
                 CornerRadius="8"
