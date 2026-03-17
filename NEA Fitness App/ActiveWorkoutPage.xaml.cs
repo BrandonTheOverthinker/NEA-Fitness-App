@@ -159,8 +159,6 @@ public partial class ActiveWorkoutPage : ContentPage
                         ExerciseId = exercise.ExerciseId,
                         ExerciseName = exercise.ExerciseName,
                         ExerciseType = exercise.ExerciseType,
-                        SetCount = 0,
-                        SetSummary = "No sets logged yet."
                     };
                     _loggedExercises.Add(vm);
                     // Refresh CollectionView:
@@ -257,6 +255,8 @@ public partial class ActiveWorkoutPage : ContentPage
 
                 // Clear inputs ready for next set:
                 WeightEntry.Text = RepsEntry.Text = DistanceEntry.Text = TimeEntry.Text  = string.Empty;
+
+                StartRestTimer(100); // CURRENTLY HARDCODED. LET USER PICK TIME BEFORE LOGGING SET.
             }
             else
             {
@@ -282,7 +282,7 @@ public partial class ActiveWorkoutPage : ContentPage
         _restSecondsRemaining = durationSeconds;
         UpdateRestTimerLabel();
 
-        RestTimer.IsVisible = true;
+        RestTimerPanel.IsVisible = true;
 
         _restTimer = Dispatcher.CreateTimer();
         _restTimer.Interval = TimeSpan.FromSeconds(1);
@@ -290,11 +290,42 @@ public partial class ActiveWorkoutPage : ContentPage
         _restTimer.Start();
     }
 
-    private void OnRestTimerTick(object? sender, EventArgs e) {}
+    private void OnRestTimerTick(object? sender, EventArgs e)
+    {
+        _restSecondsRemaining--;
+        UpdateRestTimerLabel();
 
-    private void UpdateRestTimerLabel() {}
+        if (_restSecondsRemaining <= 0)
+        {
+            StopRestTimer();
+            RestTimerPanel.IsVisible = false;
 
-    private void StopRestTimer() {}
+            MainThread.BeginInvokeOnMainThread(async () =>
+                await DisplayAlert("Rest Break Over", "Start your next set.", "Continue"));
+        }
+    }
+
+    private void UpdateRestTimerLabel()
+    {
+        int minutes = _restSecondsRemaining / 60;
+        int seconds = _restSecondsRemaining % 60;
+        RestTimerLabel.Text = $"{minutes:D2}:{seconds:D2}";
+    }
+
+    private void StopRestTimer()
+    {
+        if (_restTimer != null) return;
+
+        _restTimer?.Stop();
+        //_restTimer.Tick -= OnRestTimerTick;
+        _restTimer = null;
+    }
+
+    private void OnSkipRestClicked(object? sender, EventArgs e)
+    {
+        StopRestTimer();
+        RestTimerPanel.IsVisible = false;
+    }
 
     private async void OnFinishWorkoutClicked(object sender, EventArgs e)
     {

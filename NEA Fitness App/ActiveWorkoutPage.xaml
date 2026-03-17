@@ -169,21 +169,23 @@
                         Padding="16"
                         IsVisible="false">
                         <VerticalStackLayout
-                            Spacing="10"/>
+                            Spacing="10">
                             <Label
+                                x:Name="RestTimer"
                                 Text="Rest Timer"
                                 FontAttributes="Bold"
-                                HorizontalTextAlignment="Center" />
+                                HorizontalTextAlignment="Center"
+                                IsVisible="False"/>
                             <Label
                                 x:Name="RestTimerLabel"
                                 Text="00:00"
                                 FontSize="36"
                                 FontAttributes="Bold"
                                 HorizontalTextAlignment="Center"/>
-                            <Label
+                            <Button
                                 Text="Skip Rest"
                                 Clicked="OnSkipRestClicked"/>
-                        <VerticalStackLayout/>
+                        </VerticalStackLayout>
                     </Border>
 
                 </VerticalStackLayout>
