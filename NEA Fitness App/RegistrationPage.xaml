@@ -3,6 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NEAFitnessApp.RegistrationPage"
              Title="Create Account">
+    
+    <!-- Let user go back to login screen if they didn't mean to click register -->
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior
+            IsVisible="True"
+            IsEnabled="True" />
+    </Shell.BackButtonBehavior>
+    
     <ScrollView>
         <VerticalStackLayout
             Padding="30"
