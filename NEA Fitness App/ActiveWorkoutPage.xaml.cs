@@ -20,20 +20,20 @@ public class WorkoutExerciseViewModel
 
 public partial class ActiveWorkoutPage : ContentPage
 {
-    private readonly int _userId;
-    private readonly int _workoutId;
-    private readonly string _workoutName;
+    private readonly int userId;
+    private readonly int workoutId;
+    private readonly string workoutName;
     private const string BaseUrl = "https://localhost:7281/api/workout";
 
-    private IDispatcherTimer? _workoutTimer;
-    private int _elapsedSeconds = 0;
+    private IDispatcherTimer? workoutTimer;
+    private int elapsedSeconds = 0;
 
-    private IDispatcherTimer? _restTimer;
-    private int _restSecondsRemaining = 0;
+    private IDispatcherTimer? restTimer;
+    private int restSecondsRemaining = 0;
 
     // Current Exercise Session:
-    private readonly List<WorkoutExerciseViewModel> _loggedExercises = new();
-    private WorkoutExerciseViewModel? _selectedExercise;
+    private readonly List<WorkoutExerciseViewModel> loggedExercises = new();
+    private WorkoutExerciseViewModel? selectedExercise;
 
     // JSON handles polymorphic Exercise responses from the API:
     private static readonly JsonSerializerOptions JsonOpts = new()
@@ -44,31 +44,31 @@ public partial class ActiveWorkoutPage : ContentPage
     public ActiveWorkoutPage(int userId, int workoutId, string workoutName)
     {
         InitializeComponent();
-        _userId = userId;
-        _workoutId = workoutId;
-        _workoutName = workoutName;
+        this.userId = userId;
+        this.workoutId = workoutId;
+        this.workoutName = workoutName;
 
         WorkoutNameLabel.Text = workoutName;
-        ExercisesCollectionView.ItemsSource = _loggedExercises;
+        ExercisesCollectionView.ItemsSource = loggedExercises;
 
         StartTimer();
     }
 
     private void StartTimer()
     {
-        _workoutTimer = Dispatcher.CreateTimer();
-        _workoutTimer.Interval = TimeSpan.FromSeconds(1);
-        _workoutTimer.Tick += OnTimerTick;
-        _workoutTimer.Start();
+        workoutTimer = Dispatcher.CreateTimer();
+        workoutTimer.Interval = TimeSpan.FromSeconds(1);
+        workoutTimer.Tick += OnTimerTick;
+        workoutTimer.Start();
     }
 
     private void OnTimerTick(object? sender, EventArgs e)
     {
-        _elapsedSeconds++;
+        elapsedSeconds++;
         // Format as MM:SS (switches to HH:MM:SS for long sessions):
-        TimerLabel.Text = _elapsedSeconds < 3600
-            ? TimeSpan.FromSeconds(_elapsedSeconds).ToString(@"mm\:ss")
-            : TimeSpan.FromSeconds(_elapsedSeconds).ToString(@"hh\:mm\:ss");
+        TimerLabel.Text = elapsedSeconds < 3600
+            ? TimeSpan.FromSeconds(elapsedSeconds).ToString(@"mm\:ss")
+            : TimeSpan.FromSeconds(elapsedSeconds).ToString(@"hh\:mm\:ss");
     }
 
     private async void OnAddExerciseClicked(object sender, EventArgs e)
@@ -86,7 +86,7 @@ public partial class ActiveWorkoutPage : ContentPage
         else if (action == "Create new exercise")
         {
             // Push the create page, then open the library picker when it returns automatically:
-            await Navigation.PushAsync(new CreateExercisePage(_userId));
+            await Navigation.PushAsync(new CreateExercisePage(userId));
             await PickFromLibrary();
         }
     }
@@ -96,7 +96,7 @@ public partial class ActiveWorkoutPage : ContentPage
         try
         {
             var client = new HttpClient();
-            var response = await client.GetAsync($"{BaseUrl}/exercises/user/{_userId}");
+            var response = await client.GetAsync($"{BaseUrl}/exercises/user/{userId}");
 
             // Show a clear error if the request fails rather than silently returning:
             if (!response.IsSuccessStatusCode)
@@ -133,8 +133,8 @@ public partial class ActiveWorkoutPage : ContentPage
     {
         var request = new
         {
-            WorkoutId = _workoutId,
-            UserId = _userId,
+            WorkoutId = workoutId,
+            UserId = userId,
             ExerciseId = exercise.ExerciseId,
             ExerciseNotes = string.Empty
         };
@@ -160,10 +160,10 @@ public partial class ActiveWorkoutPage : ContentPage
                         ExerciseName = exercise.ExerciseName,
                         ExerciseType = exercise.ExerciseType,
                     };
-                    _loggedExercises.Add(vm);
+                    loggedExercises.Add(vm);
                     // Refresh CollectionView:
                     ExercisesCollectionView.ItemsSource = null;
-                    ExercisesCollectionView.ItemsSource = _loggedExercises;
+                    ExercisesCollectionView.ItemsSource = loggedExercises;
                 }
             }
             else
@@ -183,7 +183,7 @@ public partial class ActiveWorkoutPage : ContentPage
     {
         if (e.CurrentSelection.FirstOrDefault() is not WorkoutExerciseViewModel selected) return;
 
-        _selectedExercise = selected;
+        selectedExercise = selected;
         SelectedExerciseLabel.Text = $"Logging set for: {selected.ExerciseName}";
         SetLoggerFrame.IsVisible = true;
         SetErrorLabel.IsVisible = false;
@@ -198,11 +198,11 @@ public partial class ActiveWorkoutPage : ContentPage
 
     private async void OnLogSetClicked(object sender, EventArgs e)
     {
-        if (_selectedExercise == null) return;
+        if (selectedExercise == null) return;
         SetErrorLabel.IsVisible = false;
 
-        int setNumber = _selectedExercise.SetSummaries.Count + 1;
-        bool isStrength = _selectedExercise.ExerciseType == "Strength";
+        int setNumber = selectedExercise.SetSummaries.Count + 1;
+        bool isStrength = selectedExercise.ExerciseType == "Strength";
 
         // Parse and validate inputs based on exercise type:
         decimal weight = 0; int reps = 0, distance = 0, time = 0;
@@ -224,9 +224,9 @@ public partial class ActiveWorkoutPage : ContentPage
 
         var request = new
         {
-            ExerciseLogId = _selectedExercise.ExerciseLogId,
+            ExerciseLogId = selectedExercise.ExerciseLogId,
             SetNumber = setNumber,
-            SetType = _selectedExercise.ExerciseType,
+            SetType = selectedExercise.ExerciseType,
             Reps = reps,
             SetWeightKG = weight,
             DistanceM = distance,
@@ -247,11 +247,11 @@ public partial class ActiveWorkoutPage : ContentPage
                     ? $"Set {setNumber}: {weight}kg x {reps}"
                     : $"Set {setNumber}: {distance}m in {time}s";
 
-                _selectedExercise.SetSummaries.Add(summary);
+                selectedExercise.SetSummaries.Add(summary);
 
                 // Refresh the CollectionView item to show updated set count:
                 ExercisesCollectionView.ItemsSource = null;
-                ExercisesCollectionView.ItemsSource = _loggedExercises;
+                ExercisesCollectionView.ItemsSource = loggedExercises;
 
                 // Clear inputs ready for next set:
                 WeightEntry.Text = RepsEntry.Text = DistanceEntry.Text = TimeEntry.Text  = string.Empty;
@@ -279,23 +279,23 @@ public partial class ActiveWorkoutPage : ContentPage
     {
         StopRestTimer(); // Stop any currently running rest timer
 
-        _restSecondsRemaining = durationSeconds;
+        restSecondsRemaining = durationSeconds;
         UpdateRestTimerLabel();
 
         RestTimerPanel.IsVisible = true;
 
-        _restTimer = Dispatcher.CreateTimer();
-        _restTimer.Interval = TimeSpan.FromSeconds(1);
-        _restTimer.Tick += OnRestTimerTick;
-        _restTimer.Start();
+        restTimer = Dispatcher.CreateTimer();
+        restTimer.Interval = TimeSpan.FromSeconds(1);
+        restTimer.Tick += OnRestTimerTick;
+        restTimer.Start();
     }
 
     private void OnRestTimerTick(object? sender, EventArgs e)
     {
-        _restSecondsRemaining--;
+        restSecondsRemaining--;
         UpdateRestTimerLabel();
 
-        if (_restSecondsRemaining <= 0)
+        if (restSecondsRemaining <= 0)
         {
             StopRestTimer();
             RestTimerPanel.IsVisible = false;
@@ -307,18 +307,18 @@ public partial class ActiveWorkoutPage : ContentPage
 
     private void UpdateRestTimerLabel()
     {
-        int minutes = _restSecondsRemaining / 60;
-        int seconds = _restSecondsRemaining % 60;
+        int minutes = restSecondsRemaining / 60;
+        int seconds = restSecondsRemaining % 60;
         RestTimerLabel.Text = $"{minutes:D2}:{seconds:D2}";
     }
 
     private void StopRestTimer()
     {
-        if (_restTimer != null) return;
+        if (restTimer == null) return;
 
-        _restTimer?.Stop();
+        restTimer?.Stop();
         //_restTimer.Tick -= OnRestTimerTick;
-        _restTimer = null;
+        restTimer = null;
     }
 
     private void OnSkipRestClicked(object? sender, EventArgs e)
@@ -337,15 +337,15 @@ public partial class ActiveWorkoutPage : ContentPage
 
         if (!confirm) return;
 
-        _workoutTimer?.Stop();
+        workoutTimer?.Stop();
 
         try
         {
             var client = new HttpClient();
-            var request = new { DurationSeconds = _elapsedSeconds };
+            var request = new { DurationSeconds = elapsedSeconds };
             var json = JsonSerializer.Serialize(request);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            await client.PatchAsync($"{BaseUrl}/{_workoutId}/finish", content);
+            await client.PatchAsync($"{BaseUrl}/{workoutId}/finish", content);
         }
         catch { /* Non-critical - timer saved best effort */ }
 
