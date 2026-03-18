@@ -94,7 +94,7 @@
                         Spacing="10"
                         IsVisible="False">
                         <Grid
-                            ColumnDefinitions="*,*"
+                            ColumnDefinitions="*,*,*"
                             ColumnSpacing="12">
                             <VerticalStackLayout
                                 Grid.Column="0"
@@ -118,6 +118,15 @@
                                     Placeholder="0"
                                     Keyboard="Numeric" />
                             </VerticalStackLayout>
+                            <VerticalStackLayout
+                                Grid.Column="2"
+                                Spacing="4">
+                                <Label
+                                    Text="Rest Timer"
+                                    FontSize="13" />
+                                <TimePicker
+                                    x:Name="RestTimerEntry" />
+                            </VerticalStackLayout>
                         </Grid>
                     </VerticalStackLayout>
 
@@ -127,7 +136,7 @@
                         Spacing="10"
                         IsVisible="False">
                         <Grid
-                            ColumnDefinitions="*,*"
+                            ColumnDefinitions="*,*,*"
                             ColumnSpacing="12">
                             <VerticalStackLayout
                                 Grid.Column="0"
@@ -150,6 +159,15 @@
                                     x:Name="TimeEntry"
                                     Placeholder="0"
                                     Keyboard="Numeric" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout
+                                    Grid.Column="2"
+                                    Spacing="4">
+                                <Label
+                                    Text="Rest Timer"
+                                    FontSize="13" />
+                                <TimePicker
+                                    x:Name="RestTimerEntry2" />
                             </VerticalStackLayout>
                         </Grid>
                     </VerticalStackLayout>
