@@ -117,15 +117,6 @@
                                     Placeholder="0"
                                     Keyboard="Numeric" />
                             </VerticalStackLayout>
-                            <VerticalStackLayout
-                                Grid.Column="2"
-                                Spacing="4">
-                                <Label
-                                    Text="Rest Timer"
-                                    FontSize="13" />
-                                <TimePicker
-                                    x:Name="RestTimerEntry" />
-                            </VerticalStackLayout>
                         </Grid>
                     </VerticalStackLayout>
 
@@ -133,43 +124,75 @@
                     <VerticalStackLayout
                         x:Name="CardioFields"
                         Spacing="10"
-                        IsVisible="False">
-                        <Grid
-                            ColumnDefinitions="*,*,*"
+                        IsVisible="False"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        MaximumWidthRequest="1000"/>
+                    <Grid
+                            ColumnDefinitions="*,*"
                             ColumnSpacing="12">
-                            <VerticalStackLayout
+                        <VerticalStackLayout
                                 Grid.Column="0"
                                 Spacing="4">
-                                <Label
+                            <Label
                                     Text="Distance (m)"
-                                    FontSize="13" />
-                                <Entry
+                                    FontSize="13"/>
+                            <Entry
                                     x:Name="DistanceEntry"
                                     Placeholder="0"
-                                    Keyboard="Numeric" />
-                            </VerticalStackLayout>
-                            <VerticalStackLayout
+                                    Keyboard="Numeric"
+                                    MaximumWidthRequest="1000"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout
                                 Grid.Column="1"
                                 Spacing="4">
-                                <Label
-                                    Text="Time (seconds)"
+                            <Label
+                                    Text="Time (s)"
                                     FontSize="13" />
-                                <Entry
+                            <Entry
                                     x:Name="TimeEntry"
                                     Placeholder="0"
-                                    Keyboard="Numeric" />
-                            </VerticalStackLayout>
-                            <VerticalStackLayout
-                                    Grid.Column="2"
-                                    Spacing="4">
-                                <Label
-                                    Text="Rest Timer"
-                                    FontSize="13" />
-                                <TimePicker
-                                    x:Name="RestTimerEntry2" />
-                            </VerticalStackLayout>
-                        </Grid>
-                    </VerticalStackLayout>
+                                    Keyboard="Numeric"
+                                    MaximumWidthRequest="1000"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+
+                    <!-- Rest Timer Picker: -->
+                    <Grid
+                        RowDefinitions="*,*"
+                        ColumnDefinitions="*,Auto,*"
+                        ColumnSpacing="4"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center">
+                        <Label
+                            Text="Rest Timer"
+                            Grid.Row="0"
+                            HorizontalOptions="Center"
+                            FontSize="13" />
+                        <Picker
+                            x:Name="RestMinutesPicker"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            HorizontalOptions="Center"
+                            MaximumWidthRequest="100"
+                            Title="min" />
+                        <Label
+                            Text=":"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center"
+                            FontSize="Medium"
+                            FontAttributes="Bold" />
+                        <Picker
+                            x:Name="RestSecondsPicker"
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            HorizontalOptions="Center"
+                            MaximumWidthRequest="100"
+                            Title="sec" />
+                    </Grid>
 
                     <Label
                         x:Name="SetErrorLabel"

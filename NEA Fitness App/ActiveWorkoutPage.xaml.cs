@@ -12,10 +12,9 @@ public class WorkoutExerciseViewModel
     public string ExerciseType { get; set; } = string.Empty; // "Strength" or "Cardio"
     public List<string> SetSummaries { get; set; } = new(); // e.g. ["Set 1: 80kg x 8", "Set 2: 80kg x 6"]
 
-    // Displayed as subtitle in the list item:
-    public string SetSummary => SetSummaries.Count == 0
-        ? "No sets logged yet � tap to add"
-        : string.Join("  |  ", SetSummaries);
+    public string SetSummary => SetSummaries.Count == 0 
+        ? "No sets logged yet - tap to add"
+        : string.Join("  |  ", SetSummaries); // Displayed as subtitle in the list
 }
 
 public partial class ActiveWorkoutPage : ContentPage
@@ -50,6 +49,9 @@ public partial class ActiveWorkoutPage : ContentPage
 
         WorkoutNameLabel.Text = workoutName;
         ExercisesCollectionView.ItemsSource = loggedExercises;
+
+        RestMinutesPicker.ItemsSource = Enumerable.Range(0, 6).ToList(); // 0–5 minutes
+        RestSecondsPicker.ItemsSource = Enumerable.Range(0, 60).ToList(); // 0–59 seconds
 
         StartTimer();
     }
@@ -256,7 +258,13 @@ public partial class ActiveWorkoutPage : ContentPage
                 // Clear inputs ready for next set:
                 WeightEntry.Text = RepsEntry.Text = DistanceEntry.Text = TimeEntry.Text  = string.Empty;
 
-                StartRestTimer(100); // CURRENTLY HARDCODED. LET USER PICK TIME BEFORE LOGGING SET.
+                // Calculate total rest duration from the user's chosen minutes and seconds:
+                int restMinutes = RestMinutesPicker.SelectedIndex > 0 ? (int)RestMinutesPicker.SelectedItem : 0;
+                int restSeconds = RestSecondsPicker.SelectedIndex > 0 ? (int)RestSecondsPicker.SelectedItem : 0;
+                int totalRestSeconds = (restMinutes * 60) + restSeconds;
+
+                if (totalRestSeconds > 0)
+                    StartRestTimer(totalRestSeconds);
             }
             else
             {
