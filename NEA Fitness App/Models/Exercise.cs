@@ -8,7 +8,7 @@ namespace NEAFitnessApp.Models
 {
     public record Exercise
     {
-        public int ExerciseId { get; set; }
+        public int ExerciseID { get; set; }
         public string ExerciseName { get; set; } = string.Empty;
         public string ExerciseType { get; set; } = string.Empty; // "Strength" or "Cardio"
     }
