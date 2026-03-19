@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using NEAFitnessApp.Models;
 
 namespace NEAFitnessApp;
 
@@ -109,7 +110,7 @@ public partial class ActiveWorkoutPage : ContentPage
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            var exercises = JsonSerializer.Deserialize<List<ExerciseDto>>(json, JsonOpts);
+            var exercises = JsonSerializer.Deserialize<List<Exercise>>(json, JsonOpts);
 
             if (exercises == null || exercises.Count == 0)
             {
@@ -131,7 +132,7 @@ public partial class ActiveWorkoutPage : ContentPage
         }
     }
 
-    private async Task AddExerciseToWorkout(ExerciseDto exercise)
+    private async Task AddExerciseToWorkout(Exercise exercise)
     {
         var request = new
         {
@@ -151,14 +152,14 @@ public partial class ActiveWorkoutPage : ContentPage
             if (response.IsSuccessStatusCode)
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
-                var log = JsonSerializer.Deserialize<ExerciseLogDto>(responseJson, JsonOpts);
+                var log = JsonSerializer.Deserialize<ExerciseLogEntry>(responseJson, JsonOpts);
 
                 if (log != null)
                 {
                     var vm = new WorkoutExerciseViewModel
                     {
-                        ExerciseLogId = log.ExerciseLogId,
-                        ExerciseId = exercise.ExerciseId,
+                        ExerciseLogId = log.ExerciseLogID,
+                        ExerciseId = exercise.ExerciseID,
                         ExerciseName = exercise.ExerciseName,
                         ExerciseType = exercise.ExerciseType,
                     };
@@ -359,23 +360,5 @@ public partial class ActiveWorkoutPage : ContentPage
 
         // Navigate back to WorkoutLog, clearing the active workout from the nav stack
         await Shell.Current.GoToAsync("//WorkoutLog");
-    }
-
-    // Data Transfer Objects (Dtos) for API responses:
-
-    private class ExerciseDto
-    {
-        [JsonPropertyName("exerciseID")]
-        public int ExerciseId { get; set; }
-        [JsonPropertyName("exerciseName")]
-        public string ExerciseName { get; set; } = string.Empty;
-        [JsonPropertyName("exerciseType")]
-        public string ExerciseType { get; set; } = string.Empty;
-    }
-
-    private class ExerciseLogDto
-    {
-        [JsonPropertyName("exerciseLogID")]
-        public int ExerciseLogId { get; set; }
     }
 }
