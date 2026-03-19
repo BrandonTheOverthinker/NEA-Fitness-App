@@ -1,21 +1,21 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
+using NEAFitnessApp.Models;
 
 namespace NEAFitnessApp;
 
-// View model for one row in the history table
+// View model for one row in the history table:
 public class SessionHistoryRow
 {
     public string DateStr { get; set; } = string.Empty; // e.g. "01 Mar"
     public string SetCount { get; set; } = string.Empty; // e.g. "4 sets"
-    public string BestSet { get; set; } = string.Empty; // e.g. "100kg × 5"  or  "1000m / 240s"
-    public string TotalVolume { get; set; } = string.Empty; // e.g. "1520" (only for strength)
+    public string BestSet { get; set; } = string.Empty; // e.g. "100kg x 5" or "1000m / 240s"
+    public string TotalVolume { get; set; } = string.Empty; // e.g. "1520" (strength only)
 }
 
 public partial class ExerciseHistoryPage : ContentPage
 {
-    private readonly int _userId;
-    private readonly int _exerciseId;
+    private readonly int userId;
+    private readonly int exerciseId;
     private const string BaseUrl = "https://localhost:7281/api/workout";
 
     private static readonly JsonSerializerOptions JsonOpts = new()
@@ -26,8 +26,8 @@ public partial class ExerciseHistoryPage : ContentPage
     public ExerciseHistoryPage(int userId, int exerciseId, string exerciseName)
     {
         InitializeComponent();
-        _userId = userId;
-        _exerciseId = exerciseId;
+        this.userId = userId;
+        this.exerciseId = exerciseId;
         PageTitleLabel.Text = exerciseName;
         Title = exerciseName;
     }
@@ -43,28 +43,34 @@ public partial class ExerciseHistoryPage : ContentPage
         try
         {
             var client = new HttpClient();
-            var response = await client.GetAsync($"{BaseUrl}/history/{_userId}/{_exerciseId}");
+            var response = await client.GetAsync($"{BaseUrl}/history/{this.userId}/{this.exerciseId}");
             if (!response.IsSuccessStatusCode) return;
 
             var json = await response.Content.ReadAsStringAsync();
-            var logs = JsonSerializer.Deserialize<List<ExerciseLogDto>>(json, JsonOpts);
+
+            // Deserialise using ExerciseLogEntry from Models/ExerciseLogEntry.cs:
+            var logs = JsonSerializer.Deserialize<List<ExerciseLogEntry>>(json, JsonOpts);
             if (logs == null || logs.Count == 0) return;
 
-            // Fetch sets for each log
-            var rows = new List<SessionHistoryRow>();
+            // Fetch sets for each log entry and build the history table rows:
+            var rows = new List<ExerciseHistoryEntry>();
             var chartData = new List<(string label, decimal value)>();
 
             foreach (var log in logs)
             {
-                var setsResponse = await client.GetAsync($"{BaseUrl}/sets/{log.ExerciseLogId}");
+                var setsResponse = await client.GetAsync($"{BaseUrl}/sets/{log.ExerciseLogID}");
                 if (!setsResponse.IsSuccessStatusCode) continue;
 
                 var setsJson = await setsResponse.Content.ReadAsStringAsync();
-                var sets = JsonSerializer.Deserialize<List<SetDto>>(setsJson, JsonOpts) ?? new();
+
+                // Deserialise using SetLog from Models/SetLog.cs:
+                var sets = JsonSerializer.Deserialize<List<SetLog>>(setsJson, JsonOpts) ?? new();
 
                 if (sets.Count == 0) continue;
 
                 bool isStrength = sets[0].SetType == "Strength";
+
+                // Read workout date from the nested WorkoutSummary property on ExerciseLogEntry:
                 string dateStr = log.Workout?.WorkoutTime.ToString("dd MMM") ?? "?";
 
                 string bestSet;
@@ -73,29 +79,30 @@ public partial class ExerciseHistoryPage : ContentPage
 
                 if (isStrength)
                 {
-                    // Best set = highest weight lifted
+                    // Best set = highest weight lifted:
                     var best = sets.OrderByDescending(s => s.SetWeightKG).First();
-                    bestSet = $"{best.SetWeightKG}kg × {best.Reps}";
+                    bestSet = $"{best.SetWeightKG}kg x {best.Reps}";
 
-                    // Total volume = sum of (weight × reps) across all sets
+                    // Total volume = sum of (weight x reps) across all sets:
                     decimal vol = sets.Sum(s => s.SetWeightKG * s.Reps);
                     totalVolume = vol.ToString("0");
                     chartValue = best.SetWeightKG; // Chart shows max weight trend
                 }
                 else
                 {
-                    // Best cardio set = furthest distance
+                    // Best cardio set = furthest distance:
                     var best = sets.OrderByDescending(s => s.DistanceM).First();
                     bestSet = $"{best.DistanceM}m / {best.TimeSeconds}s";
                     chartValue = best.DistanceM;
                 }
 
-                rows.Add(new SessionHistoryRow
+                rows.Add(new ExerciseHistoryEntry
                 {
                     DateStr = dateStr,
                     SetCount = $"{sets.Count} set{(sets.Count != 1 ? "s" : "")}",
                     BestSet = bestSet,
-                    TotalVolume = totalVolume
+                    TotalVolume = totalVolume,
+                    ExerciseLogID = log.ExerciseLogID
                 });
 
                 chartData.Add((dateStr, chartValue));
@@ -110,9 +117,8 @@ public partial class ExerciseHistoryPage : ContentPage
         }
     }
 
-    // Build simple horizontal bar chart using BoxViews;
-    // Each bar's height is proportional to the max value in the dataset;
-    // For a production-quality chart, could replace this with OxyPlot or Microcharts.
+    // Build a simple bar chart using BoxViews proportional to the max value in the dataset.
+    // For a production-quality chart, I could replace this with OxyPlot or Microcharts:
     private void BuildBarChart(List<(string label, decimal value)> data)
     {
         ChartBarsLayout.Children.Clear();
@@ -139,16 +145,14 @@ public partial class ExerciseHistoryPage : ContentPage
             {
                 Text = value.ToString("0"),
                 FontSize = 9,
-                TextColor = Colors.White,
                 HorizontalTextAlignment = TextAlignment.Center
             });
 
             // The bar itself:
             column.Children.Add(new BoxView
             {
-                Color = Color.FromArgb("#4CAF50"),
                 WidthRequest = 30,
-                HeightRequest = Math.Max(barHeight, 4), // Minimum 4px so that 0 values are visible
+                HeightRequest = Math.Max(barHeight, 4), // Minimum 4px so zero values are still visible
                 HorizontalOptions = LayoutOptions.Center,
                 CornerRadius = 3
             });
@@ -158,40 +162,10 @@ public partial class ExerciseHistoryPage : ContentPage
             {
                 Text = label,
                 FontSize = 9,
-                TextColor = Color.FromArgb("#AAAAAA"),
                 HorizontalTextAlignment = TextAlignment.Center
             });
 
             ChartBarsLayout.Children.Add(column);
         }
-    }
-
-    // Data Transfer Objects (DTOs) for API responses:
-    private class ExerciseLogDto
-    {
-        [JsonPropertyName("exerciseLogID")]
-        public int ExerciseLogId { get; set; }
-        [JsonPropertyName("workout")]
-        public WorkoutDto? Workout { get; set; }
-    }
-
-    private class WorkoutDto
-    {
-        [JsonPropertyName("workoutTime")]
-        public DateTime WorkoutTime { get; set; }
-    }
-
-    private class SetDto
-    {
-        [JsonPropertyName("setType")]
-        public string SetType { get; set; } = string.Empty;
-        [JsonPropertyName("reps")]
-        public int Reps { get; set; }
-        [JsonPropertyName("setWeightKG")]
-        public decimal SetWeightKG { get; set; }
-        [JsonPropertyName("distanceM")]
-        public int DistanceM { get; set; }
-        [JsonPropertyName("timeSeconds")]
-        public int TimeSeconds { get; set; }
     }
 }

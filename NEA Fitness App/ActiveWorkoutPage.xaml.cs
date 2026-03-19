@@ -7,8 +7,8 @@ namespace NEAFitnessApp;
 
 public class WorkoutExerciseViewModel
 {
-    public int ExerciseLogId { get; set; }
-    public int ExerciseId { get; set; }
+    public int ExerciseLogID { get; set; }
+    public int ExerciseID { get; set; }
     public string ExerciseName { get; set; } = string.Empty;
     public string ExerciseType { get; set; } = string.Empty; // "Strength" or "Cardio"
     public List<string> SetSummaries { get; set; } = new(); // e.g. ["Set 1: 80kg x 8", "Set 2: 80kg x 6"]
@@ -136,9 +136,9 @@ public partial class ActiveWorkoutPage : ContentPage
     {
         var request = new
         {
-            WorkoutId = workoutId,
-            UserId = userId,
-            ExerciseId = exercise.ExerciseId,
+            WorkoutID = workoutId,
+            UserID = userId,
+            exercise.ExerciseID,
             ExerciseNotes = string.Empty
         };
 
@@ -158,8 +158,8 @@ public partial class ActiveWorkoutPage : ContentPage
                 {
                     var vm = new WorkoutExerciseViewModel
                     {
-                        ExerciseLogId = log.ExerciseLogID,
-                        ExerciseId = exercise.ExerciseID,
+                        ExerciseLogID = log.ExerciseLogID,
+                        ExerciseID = exercise.ExerciseID,
                         ExerciseName = exercise.ExerciseName,
                         ExerciseType = exercise.ExerciseType,
                     };
@@ -227,7 +227,7 @@ public partial class ActiveWorkoutPage : ContentPage
 
         var request = new
         {
-            ExerciseLogId = selectedExercise.ExerciseLogId,
+            ExerciseLogId = selectedExercise.ExerciseLogID,
             SetNumber = setNumber,
             SetType = selectedExercise.ExerciseType,
             Reps = reps,

@@ -1,18 +1,24 @@
 using System.Text;
 using System.Text.Json;
+using NEAFitnessApp.Models;
 
 namespace NEAFitnessApp;
 
 public partial class CreateExercisePage : ContentPage
 {
-    private readonly int _userId;
+    private readonly int userId;
     private const string BaseUrl = "https://localhost:7281/api/workout";
+
+    private static readonly JsonSerializerOptions JsonOpts = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
 
     // Page accepts the current userId so it can link the new exercise to their library:
     public CreateExercisePage(int userId)
     {
         InitializeComponent();
-        _userId = userId;
+        this.userId = userId;
     }
 
     // Update the hint label when the user changes the exercise type picker:
@@ -22,7 +28,7 @@ public partial class CreateExercisePage : ContentPage
         TypeHintLabel.Text = ExerciseTypePicker.SelectedItem?.ToString() switch
         {
             "Strength" => "Strength exercises log: weight (kg) and reps per set.",
-            "Cardio" => "Cardio exercises log: distance (metres) and time (seconds) per set.",
+            "Cardio" => "Cardio exercises log: distance (metres) and time per set.",
             _ => string.Empty
         };
     }
@@ -32,7 +38,7 @@ public partial class CreateExercisePage : ContentPage
         ErrorLabel.IsVisible = false;
 
         // Guard to ensure a real user ID was passed in before writing to DB:
-        if (_userId == 0)
+        if (this.userId == 0)
         {
             ErrorLabel.Text = "User session not found. Please log in again.";
             ErrorLabel.IsVisible = true;
@@ -56,9 +62,9 @@ public partial class CreateExercisePage : ContentPage
 
         var request = new
         {
+            UserID = this.userId,
             ExerciseName = ExerciseNameEntry.Text.Trim(),
-            ExerciseType = ExerciseTypePicker.SelectedItem.ToString(),
-            UserId = _userId
+            ExerciseType = ExerciseTypePicker.SelectedItem.ToString()
         };
 
         try
@@ -66,13 +72,17 @@ public partial class CreateExercisePage : ContentPage
             var client = new HttpClient();
             var json = JsonSerializer.Serialize(request);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-
             var response = await client.PostAsync($"{BaseUrl}/exercises/create", content);
 
             if (response.IsSuccessStatusCode)
             {
-                await DisplayAlert("Saved", $"{request.ExerciseName} added to the exercise library.", "OK");
-                await Navigation.PopAsync(); // Return to wherever called this page using stack
+                var responseJson = await response.Content.ReadAsStringAsync();
+
+                // Deserialise the created exercise using Exercise from Models/Exercise.cs:
+                var created = JsonSerializer.Deserialize<Exercise>(responseJson, JsonOpts);
+
+                await DisplayAlert("Saved", $"{created?.ExerciseName ?? request.ExerciseName} added to the exercise library.", "OK");
+                await Navigation.PopAsync(); // Return to wherever called this page
             }
             else
             {

@@ -9,5 +9,8 @@
         public int ExerciseID { get; set; }
         public string ExerciseNotes { get; set; } = string.Empty; // Add feature to log notes about individual exercise.
                                                                   // (e.g. "Set seat height to 5" on Lat Pulldowns).
+
+        // Included in history responses so I can read the workout date for the chart:
+        public WorkoutSummary? Workout { get; set; }
     }
 }
