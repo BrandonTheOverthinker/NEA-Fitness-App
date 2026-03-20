@@ -89,7 +89,7 @@ public partial class WorkoutLog : ContentPage
             return;
         }
 
-        var request = new
+        var request = new WorkoutSummary
         {
             UserID = CurrentUserId,
             WorkoutName = WorkoutNameEntry.Text.Trim(),
