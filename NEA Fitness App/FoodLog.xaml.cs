@@ -2,6 +2,9 @@ using System.Collections.ObjectModel;
 using System.Net.Http.Json;
 using NEAFitnessApp.Models;
 using NEAFitnessApp.Helpers;
+using System.Buffers.Text;
+using System.Text.Json;
+using System.Text;
 
 namespace NEAFitnessApp;
 
@@ -13,13 +16,37 @@ public partial class FoodLog : ContentPage
 
     public string TotalCalories { get; set; } = "0";
     public string TotalProtein { get; set; } = "0";
+    public string TotalFat { get; set; } = "0";
+    public string TotalSatFat { get; set; } = "0";
+    public string TotalCarbs { get; set; } = "0";
+    public string TotalSugar { get; set; } = "0";
+    public string TotalFibre { get; set; } = "0";
+
+    private readonly int foodLogId;
+    private readonly int userId;
+    private readonly int foodItemId;
+    private readonly DateTime logTime;
+    private readonly decimal quantity;
+
 
     private readonly HttpClient _httpClient = new HttpClient { BaseAddress = new Uri("https://localhost:7281/") };
 
-    public FoodLog()
+    private static readonly JsonSerializerOptions JsonOpts = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
+    public FoodLog(int foodLogId, int userId, int foodItemId, DateTime logTime, decimal quantity)
     {
         InitializeComponent();
-        BindingContext = this;
+
+        this.foodLogId = foodLogId;
+        this.userId = userId;
+        this.foodItemId = foodItemId;
+        this.logTime = logTime;
+        this.quantity = quantity;
+
+        
     }
 
     protected override async void OnAppearing()
@@ -177,9 +204,20 @@ public partial class FoodLog : ContentPage
         try
         {
             var response = await _httpClient.PostAsJsonAsync("api/auth/log", newLog);
-
+            var client = new HttpClient();
+            var json = JsonSerializer.Serialize(newLog);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            
             if (response.IsSuccessStatusCode)
             {
+                // Deserialise using the shared WorkoutSummary model:
+                var FoodLog = JsonSerializer.Deserialize<FoodLogEntry>(json, JsonOpts);
+
+                if (FoodLog != null)
+                {
+                    // Navigate to the active session, passing the created workout's ID:
+                    await Navigation.PushAsync(new FoodLog(FoodLog.FoodLogID, FoodLog.UserID, FoodLog.FoodItemID, FoodLog.LogTime, FoodLog.Quantity));
+                }
                 await LoadDailyLogs(DateTime.Today);
                 await CalculateWeeklyAverage();
 
