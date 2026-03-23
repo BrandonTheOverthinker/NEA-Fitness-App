@@ -210,7 +210,7 @@ public partial class FoodLog : ContentPage
             
             if (response.IsSuccessStatusCode)
             {
-                // Deserialise using the shared WorkoutSummary model:
+                // Deserialise using the shared FoodLogEntry model:
                 var FoodLog = JsonSerializer.Deserialize<FoodLogEntry>(json, JsonOpts);
 
                 if (FoodLog != null)
