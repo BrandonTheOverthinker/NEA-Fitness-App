@@ -129,32 +129,58 @@
                         VerticalOptions="Center"
                         MaximumWidthRequest="1000"/>
                     <Grid
-                            ColumnDefinitions="*,*"
-                            ColumnSpacing="12">
+                        ColumnDefinitions="*,Auto,*,Auto,*,*,*"
+                        ColumnSpacing="12"
+                        RowDefinitions="*,*" >
                         <VerticalStackLayout
+                            Grid.Column="6"
+                            Spacing="4">
+                            <Label
+                                Text="Distance (m)"
+                                Grid.Row="0"
+                                FontSize="13"/>
+                            <Entry
+                                x:Name="DistanceEntry"
+                                Grid.Row="1"
+                                Placeholder="7"
+                                Keyboard="Numeric"
+                                MaximumWidthRequest="1000"/>
+                        </VerticalStackLayout>
+                        <Grid
+                            ColumnDefinitions="*,Auto,*,Auto,*"
+                            ColumnSpacing="4" >
+                            <Label
+                                Text="Time (HH:MM:SS)"
+                                FontSize="13"
+                                Grid.Row="0" />
+                            <Picker
+                                x:Name="CardioHoursPicker"
                                 Grid.Column="0"
-                                Spacing="4">
+                                Grid.Row="1"
+                                Title="HH" />
                             <Label
-                                    Text="Distance (m)"
-                                    FontSize="13"/>
-                            <Entry
-                                    x:Name="DistanceEntry"
-                                    Placeholder="0"
-                                    Keyboard="Numeric"
-                                    MaximumWidthRequest="1000"/>
-                        </VerticalStackLayout>
-                        <VerticalStackLayout
+                                Text=":"
                                 Grid.Column="1"
-                                Spacing="4">
+                                Grid.Row="1"
+                                FontAttributes="Bold"
+                                VerticalOptions="Center" />
+                            <Picker
+                                x:Name="CardioMinutesPicker"
+                                Grid.Column="2"
+                                Grid.Row="1"
+                                Title="MM" />
                             <Label
-                                    Text="Time (s)"
-                                    FontSize="13" />
-                            <Entry
-                                    x:Name="TimeEntry"
-                                    Placeholder="0"
-                                    Keyboard="Numeric"
-                                    MaximumWidthRequest="1000"/>
-                        </VerticalStackLayout>
+                                Text=":"
+                                Grid.Column="3"
+                                Grid.Row="1"
+                                FontAttributes="Bold"
+                                VerticalOptions="Center" />
+                            <Picker
+                                x:Name="CardioSecondsPicker"
+                                Grid.Column="4"
+                                Grid.Row="1"
+                                Title="SS" />
+                        </Grid>
                     </Grid>
 
 

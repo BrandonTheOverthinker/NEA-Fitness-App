@@ -54,6 +54,10 @@ public partial class ActiveWorkoutPage : ContentPage
         RestMinutesPicker.ItemsSource = Enumerable.Range(0, 6).ToList(); // 0–5 minutes
         RestSecondsPicker.ItemsSource = Enumerable.Range(0, 60).ToList(); // 0–59 seconds
 
+        CardioHoursPicker.ItemsSource = Enumerable.Range(0,24).ToList();
+        CardioMinutesPicker.ItemsSource = Enumerable.Range(0,60).ToList();
+        CardioSecondsPicker.ItemsSource = Enumerable.Range(0, 60).ToList();
+
         StartTimer();
     }
 
@@ -191,12 +195,13 @@ public partial class ActiveWorkoutPage : ContentPage
         SetLoggerFrame.IsVisible = true;
         SetErrorLabel.IsVisible = false;
 
-        // Polymorphic UI that shows the correct fields based on exercise type:
+        // UI that shows the correct fields based on exercise type:
         StrengthFields.IsVisible = selected.ExerciseType == "Strength";
         CardioFields.IsVisible = selected.ExerciseType == "Cardio";
 
         // Clear previous entries:
-        WeightEntry.Text = RepsEntry.Text = DistanceEntry.Text = TimeEntry.Text = string.Empty;
+        WeightEntry.Text = RepsEntry.Text = DistanceEntry.Text = string.Empty;
+        CardioHoursPicker.SelectedIndex = -1; CardioMinutesPicker.SelectedIndex = -1; CardioSecondsPicker.SelectedIndex = -1;
     }
 
     private async void OnLogSetClicked(object sender, EventArgs e)
@@ -219,9 +224,14 @@ public partial class ActiveWorkoutPage : ContentPage
         }
         else
         {
+            int cardioHours = CardioHoursPicker.SelectedIndex >= 0 ? (int)CardioHoursPicker.SelectedIndex : 0;
+            int cardoMinutes = CardioMinutesPicker.SelectedIndex >= 0 ? (int)CardioMinutesPicker.SelectedIndex : 0;
+            int cardioSeconds = CardioSecondsPicker.SelectedIndex >= 0 ? (int)CardioSecondsPicker.SelectedIndex : 0;
+            time = (3600 * cardioHours) + (60 * cardoMinutes) + cardioSeconds;
+
             if (!int.TryParse(DistanceEntry.Text, out distance) || distance <= 0)
             { ShowSetError("Please enter a valid distance."); return; }
-            if (!int.TryParse(TimeEntry.Text, out time) || time <= 0)
+            if (time < 0)
             { ShowSetError("Please enter a valid time."); return; }
         }
 
@@ -257,7 +267,8 @@ public partial class ActiveWorkoutPage : ContentPage
                 ExercisesCollectionView.ItemsSource = loggedExercises;
 
                 // Clear inputs ready for next set:
-                WeightEntry.Text = RepsEntry.Text = DistanceEntry.Text = TimeEntry.Text  = string.Empty;
+                WeightEntry.Text = RepsEntry.Text = DistanceEntry.Text = string.Empty;
+                CardioHoursPicker.SelectedIndex = -1; CardioMinutesPicker.SelectedIndex = -1; CardioSecondsPicker.SelectedIndex = -1;
 
                 // Calculate total rest duration from the user's chosen minutes and seconds:
                 int restMinutes = RestMinutesPicker.SelectedIndex > 0 ? (int)RestMinutesPicker.SelectedItem : 0;
