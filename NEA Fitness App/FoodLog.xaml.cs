@@ -5,6 +5,7 @@ using NEAFitnessApp.Helpers;
 using System.Buffers.Text;
 using System.Text.Json;
 using System.Text;
+using System.Linq.Expressions;
 
 namespace NEAFitnessApp;
 
@@ -22,13 +23,6 @@ public partial class FoodLog : ContentPage
     public string TotalSugar { get; set; } = "0";
     public string TotalFibre { get; set; } = "0";
 
-    private readonly int foodLogId;
-    private readonly int userId;
-    private readonly int foodItemId;
-    private readonly DateTime logTime;
-    private readonly decimal quantity;
-
-
     private readonly HttpClient _httpClient = new HttpClient { BaseAddress = new Uri("https://localhost:7281/") };
 
     private static readonly JsonSerializerOptions JsonOpts = new()
@@ -36,22 +30,25 @@ public partial class FoodLog : ContentPage
         PropertyNameCaseInsensitive = true
     };
 
-    public FoodLog(int foodLogId, int userId, int foodItemId, DateTime logTime, decimal quantity)
+    public FoodLog()
     {
         InitializeComponent();
+        BindingContext = this;
 
-        this.foodLogId = foodLogId;
-        this.userId = userId;
-        this.foodItemId = foodItemId;
-        this.logTime = logTime;
-        this.quantity = quantity;
-
-        
+        // Set Default Log Date and Time:
+        LogTimePicker.Time = DateTime.Now.TimeOfDay;
+        LogDatePicker.Date = DateTime.Now.Date;
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        int userId = Preferences.Get("CurrentUserID", 0);
+        if (userId == 0)
+        {
+            await DisplayAlert("Error", "User not found. Please log in again.", "OK");
+            return;
+        }
 
         try
         {
@@ -95,17 +92,33 @@ public partial class FoodLog : ContentPage
                 DailyLogs.Clear();
                 decimal cals = 0;
                 decimal prot = 0;
+                decimal fat = 0;
+                decimal satFat = 0;
+                decimal carb = 0;
+                decimal sugar = 0;
+                decimal fibre = 0;
+                decimal quantity = Convert.ToDecimal(QuantityEntry.Text);
                 var sorted = SortingHelper.MergeSortChronological(logs);
 
                 foreach (var log in sorted)
                 {
                     DailyLogs.Add(log);
-                    cals += log.FoodItem.Calories;
-                    prot += log.FoodItem.Protein;
+                    cals += log.FoodItem.Calories * quantity;
+                    prot += log.FoodItem.Protein * quantity;
+                    fat += log.FoodItem.Fat * quantity;
+                    satFat += log.FoodItem.SaturatedFat * quantity;
+                    carb += log.FoodItem.Carbohydrates * quantity;
+                    sugar += log.FoodItem.Sugar * quantity;
+                    fibre += log.FoodItem.Fibre * quantity;
                 }
 
                 TotalCalories = cals.ToString("F0");
                 TotalProtein = prot.ToString("F1");
+                TotalFat = fat.ToString("F1");
+                TotalSatFat = satFat.ToString("F1");
+                TotalCarbs = carb.ToString("F1");
+                TotalSugar = sugar.ToString("F1");
+                TotalFibre = fibre.ToString("F1");
 
                 OnPropertyChanged(nameof(TotalCalories));
                 OnPropertyChanged(nameof(TotalProtein));
@@ -116,19 +129,43 @@ public partial class FoodLog : ContentPage
 
     private async void OnCreateFoodClicked(object sender, EventArgs e)
     {
-        // ADD EXCEPTION HANDLING HERE!
-        var newFood = new FoodItem
+        
+        int userId = Preferences.Get("CurrentUserID", 0);
+        if (userId == 0)
         {
-            FoodName = NewFoodNameEntry.Text,
-            Calories = int.Parse(NewFoodCalsEntry.Text),
-            Protein = decimal.Parse(NewFoodProteinEntry.Text)
-        };
+            await DisplayAlert("Error", "User not found. Please log in again.", "OK");
+            return;
+        }
+        try
+        {
+            var newFood = new FoodItem // ADD EXCEPTION HANDLING HERE!!!!!!!!!
+            {
+                FoodName = NewFoodNameEntry.Text,
+                Calories = int.Parse(NewFoodCalsEntry.Text),
+                Protein = decimal.Parse(NewFoodProteinEntry.Text),
+                Fat = decimal.Parse(NewFoodFatEntry.Text),
+                SaturatedFat = decimal.Parse(NewFoodSatFatEntry.Text),
+                Carbohydrates = decimal.Parse(NewFoodCarbEntry.Text),
+                Sugar = decimal.Parse(NewFoodSugarEntry.Text),
+                Fibre = decimal.Parse(NewFoodFibreEntry.Text),
+                CreatedByUserID = userId,
+            };
 
-        var response = await _httpClient.PostAsJsonAsync("api/food/create", newFood);
-        if (response.IsSuccessStatusCode)
+            var response = await _httpClient.PostAsJsonAsync("api/food/create", newFood);
+            if (response.IsSuccessStatusCode)
+            {
+                await LoadAllFoods(); // Refresh and re-sort the table
+                await DisplayAlert("Success", "Food added to database", "OK");
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                await DisplayAlert("Error", "Failed to add food to database: " + error, "OK");
+            }
+        }
+        catch (Exception ex)
         {
-            await LoadAllFoods(); // Refresh and re-sort the table
-            await DisplayAlert("Success", "Food added to database", "OK");
+            await DisplayAlert("Connection Error", ex.Message, "OK");
         }
     }
 
@@ -192,31 +229,33 @@ public partial class FoodLog : ContentPage
             return;
         }
 
-        // Create the log object to send to the backend
+        var logDate = LogDatePicker.Date; // Allow user to log to previous days.
+        var logTimeOfDay = LogTimePicker.Time; // Allow user to pick custom time to log to.
+        var logDateTime = logDate + logTimeOfDay; // Combine date and time for database storage.
+
+        // Create the log object to send to the backend:
         var newLog = new FoodLogEntry
         {
             UserID = userId,
             FoodItemID = selectedFood.FoodItemId,
-            LogTime = DateTime.Now,
+            LogTime = logDateTime,
             Quantity = 1.0m // Defaulting to 1 serving
         };
 
         try
         {
-            var response = await _httpClient.PostAsJsonAsync("api/auth/log", newLog);
+            var response = await _httpClient.PostAsJsonAsync("api/food/log", newLog);
             var client = new HttpClient();
             var json = JsonSerializer.Serialize(newLog);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             
             if (response.IsSuccessStatusCode)
             {
-                // Deserialise using the shared FoodLogEntry model:
                 var FoodLog = JsonSerializer.Deserialize<FoodLogEntry>(json, JsonOpts);
 
                 if (FoodLog != null)
                 {
-                    // Navigate to the active session, passing the created workout's ID:
-                    await Navigation.PushAsync(new FoodLog(FoodLog.FoodLogID, FoodLog.UserID, FoodLog.FoodItemID, FoodLog.LogTime, FoodLog.Quantity));
+                    await Navigation.PushAsync(new FoodLog());
                 }
                 await LoadDailyLogs(DateTime.Today);
                 await CalculateWeeklyAverage();
