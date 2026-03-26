@@ -20,7 +20,7 @@ namespace FitnessAppBackend.Repositories
         public async Task<FoodItem> AddFoodAsync(FoodItem newFood)
         {
             context.FoodItems.Add(newFood);
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(); // Writes to SQL
             return newFood;
         }
 
@@ -34,7 +34,7 @@ namespace FitnessAppBackend.Repositories
 
         public async Task<List<FoodLog>> GetWeeklyLogsAsync(int userId, DateTime startDate)
         {
-            DateTime endDate = startDate.AddDays(7);
+           DateTime endDate = startDate.AddDays(7);
             
             return await context.FoodLogs
                 .Include(f => f.FoodItem)
@@ -42,10 +42,10 @@ namespace FitnessAppBackend.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<FoodLog>> LogFoodAsync(int userId, DateTime date, FoodLog food)
+        public async Task<List<FoodLog>> LogFoodAsync(int userId, DateTime date, FoodLog entry)
         {
-            context.FoodLogs.Add(food);
-            await context.SaveChangesAsync();
+            context.FoodLogs.Add(entry);
+            await context.SaveChangesAsync(); // Writes to SQL
             return await context.FoodLogs
                 .Include(f => f.FoodItem)
                 .Where(f => f.UserID == userId && f.LogTime.Date == date.Date)
