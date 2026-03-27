@@ -38,6 +38,7 @@
                     FontSize="14" />
                 <Picker
                     x:Name="ExerciseTypePicker"
+                    TextColor="#41c146"
                     SelectedIndexChanged="OnExerciseTypeChanged">
                     <Picker.Items>
                         <x:String>Strength</x:String>
