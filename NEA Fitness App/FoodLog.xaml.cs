@@ -2,10 +2,8 @@ using System.Collections.ObjectModel;
 using System.Net.Http.Json;
 using NEAFitnessApp.Models;
 using NEAFitnessApp.Helpers;
-using System.Buffers.Text;
 using System.Text.Json;
 using System.Text;
-using System.Linq.Expressions;
 
 namespace NEAFitnessApp;
 
@@ -100,6 +98,7 @@ public partial class FoodLog : ContentPage
                 decimal quantity = Convert.ToDecimal(QuantityEntry.Text);
                 var sorted = SortingHelper.MergeSortChronological(logs);
 
+                // Get totals and multiply them by quantity
                 foreach (var log in sorted)
                 {
                     DailyLogs.Add(log);
@@ -122,6 +121,11 @@ public partial class FoodLog : ContentPage
 
                 OnPropertyChanged(nameof(TotalCalories));
                 OnPropertyChanged(nameof(TotalProtein));
+                OnPropertyChanged(nameof(TotalFat));
+                OnPropertyChanged(nameof(TotalSatFat));
+                OnPropertyChanged(nameof(TotalCarbs));
+                OnPropertyChanged(nameof(TotalSugar));
+                OnPropertyChanged(nameof(TotalFibre));
             }
         }
         catch (Exception ex) { await DisplayAlert("Error", ex.Message, "OK"); }
@@ -148,6 +152,7 @@ public partial class FoodLog : ContentPage
                 Carbohydrates = decimal.Parse(NewFoodCarbEntry.Text),
                 Sugar = decimal.Parse(NewFoodSugarEntry.Text),
                 Fibre = decimal.Parse(NewFoodFibreEntry.Text),
+                Quantity = decimal.Parse(QuantityEntry.Text),
                 CreatedByUserID = userId,
             };
 

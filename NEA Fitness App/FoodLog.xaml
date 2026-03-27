@@ -201,7 +201,7 @@
                             <Label Text="{Binding FoodItem.Fibre, StringFormat='{}{0} g'}"
                                    HorizontalOptions="Center"
                                    Grid.Column="7" />
-                            <Label Text="{Binding Quantity}"
+                            <Label Text="{Binding FoodItem.Quantity}"
                                    HorizontalOptions="Center"
                                    Grid.Column="8" />
                             <Label Text="{Binding LogTime, StringFormat='{0:HH:mm}'}"

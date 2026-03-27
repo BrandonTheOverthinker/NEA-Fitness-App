@@ -19,6 +19,7 @@ namespace NEAFitnessApp.Models
         public decimal Carbohydrates { get; set; }
         public decimal Sugar { get; set; }
         public decimal Fibre { get; set; }
+        public decimal Quantity { get; set; }
 
         public int? CreatedByUserID { get; set; }
     }
