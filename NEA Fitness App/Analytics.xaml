@@ -2,35 +2,122 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NEAFitnessApp.Analytics"
-             Title="Analytics">
-    <VerticalStackLayout
-        Padding="30,0"
-        Spacing="35">
-        <Label 
-            Text="Workout Stats"
-            Style="{StaticResource Headline}" />
-        <Label 
-            Text="Macronutrient Stats"
-            Style="{StaticResource Headline}" />
-        <Label 
-            Text="Goal Progress"
-            Style="{StaticResource Headline}" />
-        <Grid ColumnDefinitions="*,*,*">
-            <Label
-                Text="Body Weight Goal"
-                Style="{StaticResource SubHeadline}"
-                SemanticProperties.HeadingLevel="Level2"
-                Grid.Column="0"/>
-            <Label
-                Text="Nutrition Goal"
-                Style="{StaticResource SubHeadline}"
-                SemanticProperties.HeadingLevel="Level2"
-                Grid.Column="1"/>
-            <Label
-                Text="Exercise Goal"
-                Style="{StaticResource SubHeadline}"
-                SemanticProperties.HeadingLevel="Level2"
-                Grid.Column="2"/>
-        </Grid>
-    </VerticalStackLayout>
+             Title="Analytics"
+             BackgroundColor="{StaticResource Secondary}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <!-- Header -->
+            <Label Text="Analytics Dashboard"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
+
+            <!-- Workout Stats Section -->
+            <Border StrokeThickness="1"
+                    Stroke="{StaticResource Primary}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Workout Stats"
+                           FontSize="18"
+                           FontAttributes="Bold" />
+                    <Label x:Name="WorkoutStatsLabel"
+                           Text="Loading..."
+                           FontSize="14"
+                           LineBreakMode="WordWrap" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Nutrition Info Section -->
+            <Border StrokeThickness="1"
+                    Stroke="{StaticResource Primary}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Nutrition Insights"
+                           FontSize="18"
+                           FontAttributes="Bold" />
+                    <Label x:Name="NutritionInfoLabel"
+                           Text="Loading..."
+                           FontSize="14"
+                           LineBreakMode="WordWrap" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Macronutrient Analysis Section -->
+            <Border StrokeThickness="1"
+                    Stroke="{StaticResource Primary}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Macronutrient Summary"
+                           FontSize="18"
+                           FontAttributes="Bold" />
+                    <Label x:Name="MacroAnalyticsLabel"
+                           Text="Loading..."
+                           FontSize="12"
+                           LineBreakMode="WordWrap" />
+
+                    <Label Text="View 7-Day Average:"
+                           FontSize="12"
+                           FontAttributes="Bold"
+                           Margin="0,10,0,5" />
+                    <FlexLayout x:Name="MacroSelectorLayout"
+                               Wrap="Wrap"
+                               JustifyContent="Start"
+                               AlignItems="Start" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Goal Progress Section -->
+            <Border StrokeThickness="1"
+                    Stroke="{StaticResource Primary}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Goal Progress"
+                           FontSize="18"
+                           FontAttributes="Bold" />
+                    <Label x:Name="GoalProgressLabel"
+                           Text="Loading..."
+                           FontSize="14"
+                           LineBreakMode="WordWrap" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Exercise History Section -->
+            <Border StrokeThickness="1"
+                    Stroke="{StaticResource Primary}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Exercise History"
+                           FontSize="18"
+                           FontAttributes="Bold" />
+                    <Label Text="View detailed exercise performance and charts"
+                           FontSize="12"
+                           TextColor="Gray" />
+                    <Button Text="View Exercise History"
+                            Clicked="OnViewExerciseHistoryClicked"
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="White"
+                            Padding="15,10" />
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
 </ContentPage>
