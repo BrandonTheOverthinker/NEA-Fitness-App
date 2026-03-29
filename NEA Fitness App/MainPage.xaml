@@ -86,6 +86,21 @@
                 SemanticProperties.HeadingLevel="Level2"
                 HorizontalTextAlignment="Start"
                 HorizontalOptions="Start"/>
+
+            <Border StrokeThickness="1"
+                    Stroke="{StaticResource Primary}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Label x:Name="WeeklySummaryLabel"
+                           Text="Loading workout data..."
+                           FontSize="14"
+                           LineBreakMode="WordWrap" />
+                </VerticalStackLayout>
+            </Border>
+
         </VerticalStackLayout>
     </ScrollView>
 
