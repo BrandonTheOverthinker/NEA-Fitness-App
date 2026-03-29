@@ -20,6 +20,8 @@ namespace FitnessAppBackend.Models
 
         public DateTime DateCreated { get; set; }
 
+        public DateTime Deadline { get; set; }
+
         public bool IsCompleted { get; set; }
     }
 }

@@ -2,18 +2,22 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NEAFitnessApp.Goals"
-             Title="Goals">
-    <VerticalStackLayout
-        Padding="30,0"
-        Spacing="35">
-        <Label 
-            Text="Target Body Weight"
-            Style="{StaticResource Headline}" />
-        <Label
-            Text="Target Macronutrients"
-            Style="{StaticResource SubHeadline}" />
-        <Label 
-            Text="Target PRs"
-            Style="{StaticResource Headline}" />
+             Title="Goals"
+             BackgroundColor="{StaticResource Secondary}">
+
+    <VerticalStackLayout Padding="20" Spacing="15">
+
+        <Button Text="+ Create New Goal"
+                Clicked="OnCreateGoalClicked"
+                BackgroundColor="{StaticResource Primary}"
+                TextColor="White"
+                FontAttributes="Bold"
+                Padding="20,12" />
+
+        <ScrollView>
+            <VerticalStackLayout x:Name="GoalsContainer" Spacing="10" />
+        </ScrollView>
+
     </VerticalStackLayout>
+
 </ContentPage>
