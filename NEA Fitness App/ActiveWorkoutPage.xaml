@@ -125,64 +125,57 @@
                         x:Name="CardioFields"
                         Spacing="10"
                         IsVisible="False"
-                        HorizontalOptions="Center"
-                        VerticalOptions="Center"
-                        MaximumWidthRequest="1000"/>
-                    <Grid
-                        ColumnDefinitions="*,Auto,*,Auto,*,*,*"
-                        ColumnSpacing="12"
-                        RowDefinitions="*,*" >
-                        <VerticalStackLayout
-                            Grid.Column="6"
-                            Spacing="4">
-                            <Label
-                                Text="Distance (m)"
-                                Grid.Row="0"
-                                FontSize="13"/>
-                            <Entry
-                                x:Name="DistanceEntry"
-                                Grid.Row="1"
-                                Placeholder="7"
-                                Keyboard="Numeric"
-                                MaximumWidthRequest="1000"/>
-                        </VerticalStackLayout>
-                        <Grid
-                            ColumnDefinitions="*,Auto,*,Auto,*"
-                            ColumnSpacing="4" >
-                            <Label
-                                Text="Time (HH:MM:SS)"
-                                FontSize="13"
-                                Grid.Row="0" />
-                            <Picker
-                                x:Name="CardioHoursPicker"
+                        HorizontalOptions="Fill"
+                        MaximumWidthRequest="1000">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="24">
+                            <!-- Left: Time label + pickers arranged horizontally -->
+                            <VerticalStackLayout
                                 Grid.Column="0"
-                                Grid.Row="1"
-                                Title="HH" />
-                            <Label
-                                Text=":"
-                                Grid.Column="1"
-                                Grid.Row="1"
-                                FontAttributes="Bold"
-                                VerticalOptions="Center" />
-                            <Picker
-                                x:Name="CardioMinutesPicker"
-                                Grid.Column="2"
-                                Grid.Row="1"
-                                Title="MM" />
-                            <Label
-                                Text=":"
-                                Grid.Column="3"
-                                Grid.Row="1"
-                                FontAttributes="Bold"
-                                VerticalOptions="Center" />
-                            <Picker
-                                x:Name="CardioSecondsPicker"
-                                Grid.Column="4"
-                                Grid.Row="1"
-                                Title="SS" />
-                        </Grid>
-                    </Grid>
+                                Spacing="6"
+                                VerticalOptions="Center"
+                                HorizontalOptions="Start">
+                                <Label
+                                    Text="Time"
+                                    FontSize="13" />
+                                <HorizontalStackLayout
+                                    Spacing="12"
+                                    HorizontalOptions="Start">
+                                    <VerticalStackLayout
+                                        Spacing="2"
+                                        HorizontalOptions="Center">
+                                        <Picker x:Name="CardioHoursPicker"
+                                                WidthRequest="90"
+                                                Title="HH"
+                                                HorizontalOptions="Center"/>
+                                    </VerticalStackLayout>
 
+                                    <VerticalStackLayout Spacing="2" HorizontalOptions="Center">
+                                        <Picker x:Name="CardioMinutesPicker"
+                                                WidthRequest="90"
+                                                Title="MM"
+                                                HorizontalOptions="Center"/>
+                                    </VerticalStackLayout>
+
+                                    <VerticalStackLayout Spacing="2" HorizontalOptions="Center">
+                                        <Picker x:Name="CardioSecondsPicker"
+                                                WidthRequest="90"
+                                                Title="SS"
+                                                HorizontalOptions="Center"/>
+                                    </VerticalStackLayout>
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+
+                            <!-- Right: Distance -->
+                            <VerticalStackLayout
+                                Grid.Column="1"
+                                Spacing="4"
+                                HorizontalOptions="End"
+                                VerticalOptions="Center">
+                                <Label Text="Distance (m)" FontSize="13"/>
+                                <Entry x:Name="DistanceEntry" Placeholder="7" Keyboard="Numeric" WidthRequest="120"/>
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
 
                     <!-- Rest Timer Picker: -->
                     <Grid
