@@ -1,9 +1,7 @@
 using NEAFitnessApp.Helpers;
 using NEAFitnessApp.Models;
 using System.Collections.ObjectModel;
-using System.Diagnostics.Metrics;
 using System.Net.Http.Json;
-using System.Text;
 using System.Text.Json;
 
 namespace NEAFitnessApp;
