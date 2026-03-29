@@ -2,12 +2,13 @@
 
 namespace FitnessAppBackend.Interfaces
 {
-    public interface IUserRepository // tells the controller what methods the repository must implement, but not how they work
+    public interface IUserRepository
     {
         Task<User?> GetUserByUsernameAsync(string username);
+        Task<User?> GetUserByIdAsync(int userId);
         Task CreateUserAsync(User user);
+        Task UpdateUserAsync(int userId, User user);
         Task<bool> UserExistsAsync(string username);
         Task<int> GetUserCountAsync();
     }
 }
-// completed

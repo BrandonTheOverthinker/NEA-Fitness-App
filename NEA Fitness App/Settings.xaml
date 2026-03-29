@@ -2,13 +2,122 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NEAFitnessApp.Settings"
-             Title="Settings">
-    <VerticalStackLayout
-        Padding="30,0"
-        Spacing="35">
-        <Button
-            Text="Visual Preferences" />
-        <Button
-            Text="Account" />
-    </VerticalStackLayout>
+             Title="Settings"
+             BackgroundColor="{StaticResource Secondary}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <!-- User Info Section -->
+            <Border StrokeThickness="1"
+                    Stroke="{StaticResource Primary}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Account Information"
+                           FontSize="18"
+                           FontAttributes="Bold" />
+                    <Label Text="Username:"
+                           FontAttributes="Bold" />
+                    <Label x:Name="UsernameLabel"
+                           Text="Loading..."
+                           FontSize="14" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Personal Details Section -->
+            <Border StrokeThickness="1"
+                    Stroke="{StaticResource Primary}"
+                    Padding="15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Personal Details"
+                           FontSize="18"
+                           FontAttributes="Bold" />
+
+                    <Label Text="Date of Birth:"
+                           FontAttributes="Bold" />
+                    <DatePicker x:Name="DobPicker"
+                                Format="dd/MM/yyyy"
+                                DateSelected="OnMetricsChanged" />
+
+                    <Label Text="Body Weight (kg):"
+                           FontAttributes="Bold" />
+                    <Entry x:Name="WeightEntry"
+                           Placeholder="Enter weight in kg"
+                           Keyboard="Numeric"
+                           TextChanged="OnMetricsChanged" />
+
+                    <Label Text="Height (cm):"
+                           FontAttributes="Bold" />
+                    <Entry x:Name="HeightEntry"
+                           Placeholder="Enter height in cm"
+                           Keyboard="Numeric"
+                           TextChanged="OnMetricsChanged" />
+
+                    <Label Text="Biological Sex:"
+                           FontAttributes="Bold" />
+                    <Picker x:Name="GenderPicker"
+                            SelectedIndexChanged="OnMetricsChanged">
+                        <Picker.Items>
+                            <x:String>Male</x:String>
+                            <x:String>Female</x:String>
+                            <x:String>Prefer not to say</x:String>
+                        </Picker.Items>
+                    </Picker>
+
+                    <Label Text="Activity Level:"
+                           FontAttributes="Bold" />
+                    <Picker x:Name="ActivityPicker"
+                            SelectedIndexChanged="OnMetricsChanged">
+                        <Picker.Items>
+                            <x:String>BMR (Bedridden)</x:String>
+                            <x:String>Sedentary</x:String>
+                            <x:String>Lightly Active</x:String>
+                            <x:String>Moderately Active</x:String>
+                            <x:String>Very Active</x:String>
+                            <x:String>Extremely Active</x:String>
+                        </Picker.Items>
+                    </Picker>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Maintenance Goal Section -->
+            <Border StrokeThickness="1"
+                    Stroke="{StaticResource Primary}"
+                    Padding="15"
+                    BackgroundColor="#1E1E1E">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Calculated Maintenance Goal"
+                           FontSize="14"
+                           FontAttributes="Bold" />
+                    <Label x:Name="MaintenanceGoalLabel"
+                           Text="0"
+                           FontSize="32"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center" />
+                    <Label Text="kcal/day"
+                           HorizontalOptions="Center"
+                           FontSize="12"
+                           TextColor="DimGray" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="Save Changes"
+                    Clicked="OnSaveChangesClicked"
+                    BackgroundColor="{StaticResource Primary}"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    Padding="20,15" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
 </ContentPage>

@@ -7,6 +7,7 @@ using FitnessAppBackend.Interfaces;
 using FitnessAppBackend.Models;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace FitnessAppBackend.Repositories
 {
     public class UserRepository : IUserRepository
@@ -17,9 +18,29 @@ namespace FitnessAppBackend.Repositories
         public async Task<User?> GetUserByUsernameAsync(string username) =>
             await context.Users.FirstOrDefaultAsync(u => u.UserName == username);
 
+        public async Task<User?> GetUserByIdAsync(int userId) =>
+            await context.Users.FirstOrDefaultAsync(u => u.UserID == userId);
+
         public async Task CreateUserAsync(User user)
         {
             context.Users.Add(user);
+            await context.SaveChangesAsync();
+        }
+
+        public async Task UpdateUserAsync(int userId, User user)
+        {
+            var existingUser = await context.Users.FirstOrDefaultAsync(u => u.UserID == userId);
+            if (existingUser == null)
+                throw new Exception("User not found.");
+
+            existingUser.UserDOB = user.UserDOB;
+            existingUser.BodyWeight = user.BodyWeight;
+            existingUser.Height = user.Height;
+            existingUser.Gender = user.Gender;
+            existingUser.ActivityLevel = user.ActivityLevel;
+            existingUser.MaintenanceGoal = user.MaintenanceGoal;
+
+            context.Users.Update(existingUser);
             await context.SaveChangesAsync();
         }
 
