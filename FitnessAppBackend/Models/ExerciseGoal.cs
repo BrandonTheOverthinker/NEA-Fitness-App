@@ -5,7 +5,6 @@ namespace FitnessAppBackend.Models
 {
     public class ExerciseGoal
     {
-
         [Key]
         public int EGoalID { get; set; }
 
@@ -22,5 +21,9 @@ namespace FitnessAppBackend.Models
         public decimal TargetWeight { get; set; }
 
         public int TargetTime { get; set; }
+
+        [Required]
+        [Column(TypeName = "decimal(7,2)")]
+        public decimal TargetDistance { get; set; }
     }
 }
