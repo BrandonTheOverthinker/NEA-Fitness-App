@@ -60,11 +60,12 @@ public partial class CreateExercisePage : ContentPage
             return;
         }
 
+        // Match the backend DTO property names exactly (ExerciseName, ExerciseType, UserId)
         var request = new
         {
-            UserID = this.userId,
             ExerciseName = ExerciseNameEntry.Text.Trim(),
-            ExerciseType = ExerciseTypePicker.SelectedItem.ToString()
+            ExerciseType = ExerciseTypePicker.SelectedItem.ToString(),
+            UserId = this.userId
         };
 
         try
@@ -74,20 +75,28 @@ public partial class CreateExercisePage : ContentPage
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await client.PostAsync($"{BaseUrl}/exercises/create", content);
 
+            var responseJson = await response.Content.ReadAsStringAsync();
+            System.Diagnostics.Debug.WriteLine($"POST {BaseUrl}/exercises/create -> {(int)response.StatusCode} {response.StatusCode}; body: '{responseJson}'");
+
             if (response.IsSuccessStatusCode)
             {
-                var responseJson = await response.Content.ReadAsStringAsync();
-
-                // Deserialise the created exercise using Exercise from Models/Exercise.cs:
-                var created = JsonSerializer.Deserialize<Exercise>(responseJson, JsonOpts);
+                Exercise? created = null;
+                try
+                {
+                    created = JsonSerializer.Deserialize<Exercise>(responseJson, JsonOpts);
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Deserialise created exercise failed: {ex.Message}");
+                }
 
                 await DisplayAlert("Saved", $"{created?.ExerciseName ?? request.ExerciseName} added to the exercise library.", "OK");
-                await Navigation.PopAsync(); // Return to wherever called this page
+                await Navigation.PopAsync();
             }
             else
             {
-                var error = await response.Content.ReadAsStringAsync();
-                ErrorLabel.Text = $"Error: {error}";
+                // Show status code and backend body for better debugging
+                ErrorLabel.Text = $"Error ({(int)response.StatusCode}): {responseJson}";
                 ErrorLabel.IsVisible = true;
             }
         }
@@ -95,6 +104,7 @@ public partial class CreateExercisePage : ContentPage
         {
             ErrorLabel.Text = $"Could not connect to server: {ex.Message}";
             ErrorLabel.IsVisible = true;
+            System.Diagnostics.Debug.WriteLine($"Exception posting exercise: {ex}");
         }
     }
 }
