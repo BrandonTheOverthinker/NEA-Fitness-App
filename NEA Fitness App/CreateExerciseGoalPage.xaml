@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NEAFitnessApp.CreateExerciseGoalPage"
+             Title="Create Exercise Goal"
+             BackgroundColor="{StaticResource Secondary}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <Label Text="Create Exercise Goal"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
+
+            <Label Text="Select Exercise:"
+                   FontAttributes="Bold" />
+            <Picker x:Name="ExercisePicker"
+                    Title="Choose an exercise" />
+
+            <Label Text="Goal Description:"
+                   FontAttributes="Bold" />
+            <Entry x:Name="DescriptionEntry"
+                   Placeholder="e.g., Bench press 100kg" />
+
+            <Label Text="Target Weight (kg):"
+                   FontAttributes="Bold" />
+            <Entry x:Name="TargetWeightEntry"
+                   Placeholder="e.g., 100"
+                   Keyboard="Numeric" />
+
+            <Label Text="Target Time (seconds, optional):"
+                   FontAttributes="Bold" />
+            <Entry x:Name="TargetTimeEntry"
+                   Placeholder="Leave blank if not applicable"
+                   Keyboard="Numeric" />
+
+            <Label Text="Deadline:"
+                   FontAttributes="Bold" />
+            <DatePicker x:Name="DeadlinePicker"
+                        Format="dd/MM/yyyy" />
+
+            <Button Text="Create Goal"
+                    Clicked="OnCreateClicked"
+                    BackgroundColor="{StaticResource Primary}"
+                    TextColor="White"
+                    Padding="20,15"
+                    FontAttributes="Bold" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
