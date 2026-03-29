@@ -13,9 +13,6 @@ namespace FitnessAppBackend.Controllers
         private readonly IWorkoutRepository workoutRepo;
         public WorkoutController(IWorkoutRepository workoutRepo) => this.workoutRepo = workoutRepo;
 
-        // DTOs (Records)
-        // Records are immutable value objects — ideal for API request shapes.
-        // The frontend sends JSON matching these shapes.
         public record CreateExerciseRequest(string ExerciseName, string ExerciseType, int UserId);
         public record AddToLibraryRequest(int UserId, int ExerciseId);
         public record StartWorkoutRequest(int UserId, string WorkoutName, string WorkoutNotes);
@@ -24,7 +21,7 @@ namespace FitnessAppBackend.Controllers
         public record LogSetRequest(
             int ExerciseLogId,
             int SetNumber,
-            string SetType,        // "Strength" or "Cardio"
+            string SetType, // "Strength" or "Cardio"
             int Reps,
             decimal SetWeightKG,
             int DistanceM,
@@ -139,8 +136,34 @@ namespace FitnessAppBackend.Controllers
                 TimeSeconds = request.TimeSeconds
             };
 
-            var created = await workoutRepo.LogSetAsync(set);
-            return Ok(created);
+            var createdSet = await workoutRepo.LogSetAsync(set);
+
+            // Check for PR
+            var exerciseLog = await workoutRepo.GetExerciseLogAsync(request.ExerciseLogId);
+            var pr = await workoutRepo.CheckAndSavePRAsync(exerciseLog.UserID, exerciseLog.ExerciseID, createdSet);
+
+            return Ok(new
+            {
+                set = createdSet,
+                isPR = pr != null,
+                prInfo = pr != null ? new { prValue = pr.PRValue, prType = pr.PRType } : null
+            });
+        }
+
+        // DELETE api/workout/log-exercise/{exerciseLogId}
+        // Remove an exercise from an active workout:
+        [HttpDelete("log-exercise/{exerciseLogId}")]
+        public async Task<IActionResult> DeleteExerciseFromWorkout(int exerciseLogId)
+        {
+            try
+            {
+                await workoutRepo.DeleteExerciseFromWorkoutAsync(exerciseLogId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error deleting exercise from workout: {ex.Message}");
+            }
         }
 
         // Analytics Endpoints:

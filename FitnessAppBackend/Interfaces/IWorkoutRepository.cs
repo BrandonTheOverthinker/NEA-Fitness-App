@@ -21,5 +21,10 @@ namespace FitnessAppBackend.Interfaces
         // Analytics:
         Task<List<ExerciseLog>> GetExerciseHistoryAsync(int userId, int exerciseId); 
         Task<List<Set>> GetSetsForExerciseLogAsync(int exerciseLogId); // All sets for a specific exercise log
+
+        // PR Tracking:
+        Task<ExerciseLog> GetExerciseLogAsync(int exerciseLogId);
+        Task<UserPersonalRecord?> CheckAndSavePRAsync(int userId, int exerciseId, Set set);
+        Task DeleteExerciseFromWorkoutAsync(int exerciseLogId);
     }
 }

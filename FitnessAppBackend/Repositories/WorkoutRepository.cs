@@ -116,5 +116,90 @@ namespace FitnessAppBackend.Repositories
                 .Where(s => s.ExerciseLogID == exerciseLogId)
                 .OrderBy(s => s.SetNumber)
                 .ToListAsync();
+
+        // Check for PRs when logging a set:
+        public async Task<UserPersonalRecord?> CheckAndSavePRAsync(int userId, int exerciseId, Set set)
+        {
+            // Check if this is a PR for this user/exercise:
+            var existingPR = await context.PersonalRecords
+                .Where(pr => pr.UserID == userId && pr.ExerciseID == exerciseId)
+                .FirstOrDefaultAsync();
+
+            bool isPR = false;
+            string prType = set.SetType == "Strength" ? "Weight" : "Distance";
+
+            if (set.SetType == "Strength")
+            {
+                // For strength, PR is the highest weight lifted:
+                if (existingPR == null || set.SetWeightKG > existingPR.PRValue)
+                    isPR = true;
+            }
+            else
+            {
+                // For cardio, PR is the furthest distance:
+                if (existingPR == null || set.DistanceM > existingPR.PRValue)
+                    isPR = true;
+            }
+
+            if (isPR)
+            {
+                decimal prValue = set.SetType == "Strength" ? set.SetWeightKG : set.DistanceM;
+
+                var newPR = new UserPersonalRecord
+                {
+                    UserID = userId,
+                    ExerciseID = exerciseId,
+                    PRType = prType,
+                    PRValue = prValue,
+                    AchievedAt = DateTime.UtcNow,
+                    SetID = set.SetID
+                };
+
+                if (existingPR != null)
+                    context.PersonalRecords.Remove(existingPR);
+
+                context.PersonalRecords.Add(newPR);
+                await context.SaveChangesAsync();
+
+                return newPR;
+            }
+
+            return null;
+        }
+
+        public async Task<ExerciseLog> GetExerciseLogAsync(int exerciseLogId) =>
+            await context.ExerciseLogs
+                .Include(el => el.Workout)
+                .Include(el => el.Exercise)
+                .Include(el => el.User)
+                .FirstOrDefaultAsync(el => el.ExerciseLogID == exerciseLogId) 
+            ?? throw new Exception("Exercise log not found.");
+
+        public async Task DeleteExerciseFromWorkoutAsync(int exerciseLogId)
+        {
+            var log = await context.ExerciseLogs.FindAsync(exerciseLogId);
+            if (log == null) return;
+
+            int workoutId = log.WorkoutID;
+
+            // Remove sets for this log:
+            var sets = context.Sets.Where(s => s.ExerciseLogID == exerciseLogId);
+            context.Sets.RemoveRange(sets);
+
+            // Remove the exercise log:
+            context.ExerciseLogs.Remove(log);
+            await context.SaveChangesAsync();
+
+            // Re-order remaining exercise logs for that workout:
+            var remaining = await context.ExerciseLogs
+                .Where(el => el.WorkoutID == workoutId)
+                .OrderBy(el => el.ExerciseOrder)
+                .ToListAsync();
+
+            for (int i = 0; i < remaining.Count; i++)
+                remaining[i].ExerciseOrder = i + 1;
+
+            await context.SaveChangesAsync();
+        }
     }
 }
