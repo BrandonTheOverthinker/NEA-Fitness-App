@@ -255,12 +255,23 @@ public partial class ActiveWorkoutPage : ContentPage
 
             if (response.IsSuccessStatusCode)
             {
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var logResponse = JsonSerializer.Deserialize<dynamic>(responseJson, JsonOpts);
+                
                 // Add a summary string to the exercise's set list:
                 string summary = isStrength
                     ? $"Set {setNumber}: {weight}kg x {reps}"
                     : $"Set {setNumber}: {distance}m in {time}s";
 
                 selectedExercise.SetSummaries.Add(summary);
+
+                // Check if it's a PR
+                if (logResponse?.GetProperty("isPR").GetBoolean() ?? false)
+                {
+                    await DisplayAlert("NEW PR!", 
+                        $"Personal record for {selectedExercise.ExerciseName}!", 
+                        "Amazing!");
+                }
 
                 // Refresh the CollectionView item to show updated set count:
                 ExercisesCollectionView.ItemsSource = null;
@@ -369,7 +380,6 @@ public partial class ActiveWorkoutPage : ContentPage
         }
         catch { /* Non-critical - timer saved best effort */ }
 
-        // Navigate back to WorkoutLog, clearing the active workout from the nav stack
         await Shell.Current.GoToAsync("//WorkoutLog");
     }
 }
