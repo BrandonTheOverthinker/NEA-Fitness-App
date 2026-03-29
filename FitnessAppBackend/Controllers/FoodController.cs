@@ -22,16 +22,16 @@ namespace FitnessAppBackend.Controllers
         }
 
         [HttpGet("logs/{userId}/{date}")]
-        public async Task<IActionResult> GetDailyLogs(int UserID, DateTime date)
+        public async Task<IActionResult> GetDailyLogs(int userId, DateTime date)
         {
-            var logs = await foodRepo.GetLogsByDateAsync(UserID, date);
+            var logs = await foodRepo.GetLogsByDateAsync(userId, date);
             return Ok(logs);
         }
 
         [HttpGet("weekly/{userId}/{startDate}")]
-        public async Task<IActionResult> GetWeeklyLogs(int UserID, DateTime startDate)
+        public async Task<IActionResult> GetWeeklyLogs(int userId, DateTime startDate)
         {
-            var logs = await foodRepo.GetWeeklyLogsAsync(UserID, startDate);
+            var logs = await foodRepo.GetWeeklyLogsAsync(userId, startDate);
             return Ok(logs);
         }
 
