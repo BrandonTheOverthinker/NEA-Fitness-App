@@ -1,6 +1,5 @@
 ﻿namespace NEAFitnessApp.Models
 {
-    // I deserialise this from the POST log-exercise response:
     public record ExerciseLogEntry
     {
         public int ExerciseLogID { get; set; }

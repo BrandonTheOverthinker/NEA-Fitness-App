@@ -33,14 +33,13 @@ namespace FitnessAppBackend.Controllers
         }
 
         // PUT api/user/{id}
-        // Update profile fields without requiring password or PasswordHash in request body.
+        // Update profile fields without requiring password/PasswordHash in the request:
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserRequest request)
         {
             var existing = await userRepo.GetUserByIdAsync(id);
             if (existing == null) return NotFound();
 
-            // Map only mutable fields
             existing.UserDOB = request.UserDOB;
             existing.BodyWeight = request.BodyWeight;
             existing.Height = request.Height;

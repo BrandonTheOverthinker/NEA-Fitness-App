@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using FitnessAppBackend.Interfaces;
+﻿using FitnessAppBackend.Interfaces;
 using FitnessAppBackend.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -31,36 +30,37 @@ namespace FitnessAppBackend.Controllers
         // Exercise Library Endpoints:
 
         // GET api/workout/exercises/all
-        // Returns the full global exercise library (all users can see)
+        // Returns the full global exercise library:
         [HttpGet("exercises/all")]
         public async Task<IActionResult> GetAllExercises() =>
             Ok(await workoutRepo.GetAllExercisesAsync());
 
         // GET api/workout/exercises/user/{userId}
-        // Returns only the exercises in a user's personal library
+        // Returns only the exercises in a user's personal library:
         [HttpGet("exercises/user/{userId}")]
         public async Task<IActionResult> GetUserExercises(int userId) =>
             Ok(await workoutRepo.GetUserExercisesAsync(userId));
 
         // POST api/workout/exercises/create
-        // Creates a new exercise in the global DB and adds it to the user's library
+        // Creates a new exercise in the global DB and adds it to the user's library:
         [HttpPost("exercises/create")]
         public async Task<IActionResult> CreateExercise([FromBody] CreateExerciseRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.ExerciseName) || request.ExerciseName.Length > 50)
                 return BadRequest("Exercise name is required and must be 50 characters or fewer.");
 
-            // Polymorphism in action: we instantiate the correct subclass based on ExerciseType
+            // Instantiate the correct subclass based on ExerciseType:
             Exercise exercise = request.ExerciseType == "Strength"
                 ? new StrengthExercise { ExerciseName = request.ExerciseName }
                 : new CardioExercise { ExerciseName = request.ExerciseName };
+                // (this is an if statement, I use these instead of the conventional ones in some situations)
 
             var created = await workoutRepo.CreateExerciseAsync(exercise, request.UserId);
             return Ok(created);
         }
 
         // POST api/workout/exercises/add-to-library
-        // Adds an existing global exercise to the user's personal library
+        // Adds an existing global exercise to the user's personal library:
         [HttpPost("exercises/add-to-library")]
         public async Task<IActionResult> AddToLibrary([FromBody] AddToLibraryRequest request)
         {
@@ -71,7 +71,7 @@ namespace FitnessAppBackend.Controllers
         // Workout Endpoints:
 
         // POST api/workout/start
-        // Creates a new Workout row; frontend uses the returned WorkoutID for the session
+        // Creates a new Workout row; frontend uses the returned WorkoutID for the session:
         [HttpPost("start")]
         public async Task<IActionResult> StartWorkout([FromBody] StartWorkoutRequest request)
         {

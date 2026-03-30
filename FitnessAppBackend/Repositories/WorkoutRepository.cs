@@ -38,10 +38,10 @@ namespace FitnessAppBackend.Repositories
             });
             await context.SaveChangesAsync();
 
-            return exercise; // Used in frontend
+            return exercise;
         }
 
-        // Let user add an exercise from global library to their personal library.
+        // Let user add an exercise from global library to their personal library:
         public async Task AddExerciseToUserLibraryAsync(int userId, int exerciseId)
         {
             bool alreadyAdded = await context.UserExercises
@@ -64,7 +64,7 @@ namespace FitnessAppBackend.Repositories
             workout.WorkoutTime = DateTime.UtcNow;
             context.Workouts.Add(workout);
             await context.SaveChangesAsync(); // Generate WorkoutID
-            return workout; // Used in frontend
+            return workout;
         }
 
         // Save elapsed timer value:
