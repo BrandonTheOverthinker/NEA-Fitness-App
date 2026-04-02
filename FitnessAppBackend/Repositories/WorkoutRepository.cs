@@ -32,7 +32,7 @@ namespace FitnessAppBackend.Repositories
             });
             await context.SaveChangesAsync();
 
-            return exercise; // Used in frontend
+            return exercise;
         }
 
         // Let user add an exercise from global library to their personal library

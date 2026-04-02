@@ -1,6 +1,5 @@
 ﻿namespace NEAFitnessApp.Models
 {
-    // I deserialise this from the POST /start response to get the generated WorkoutID:
     public record WorkoutSummary
     {
         public int WorkoutID { get; set; }

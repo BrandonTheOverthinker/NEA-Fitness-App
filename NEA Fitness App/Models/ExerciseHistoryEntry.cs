@@ -8,6 +8,6 @@
         public string SetCount { get; set; } = string.Empty; // e.g. "3 sets"
         public string BestSet { get; set; } = string.Empty; // e.g. "50kg x 8" or "5km in 30:00"
         public string TotalVolume { get; set; } = string.Empty; // e.g. "1000" (kg) or "10:00" (time)
-        public int ExerciseLogID { get; set; } // I also store the raw ExerciseLogID so I can fetch the sets for this session
+        public int ExerciseLogID { get; set; }
     }
 }
