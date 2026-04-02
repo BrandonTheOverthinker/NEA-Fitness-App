@@ -1,5 +1,4 @@
-﻿// Only file with direct DB access for food-related operations
-using FitnessAppBackend.Data;
+﻿using FitnessAppBackend.Data;
 using FitnessAppBackend.Interfaces;
 using FitnessAppBackend.Models;
 using Microsoft.EntityFrameworkCore;
@@ -10,46 +9,41 @@ namespace FitnessAppBackend.Repositories
     {
         private readonly AppDbContext context;
 
-        public FoodRepository(AppDbContext context) => this.context = context;
+        public FoodRepository(AppDbContext context)
+        {
+            this.context = context;
+        }
 
-        public async Task<List<FoodItem>> GetAllFoodsAsync()
+        public async Task<List<FoodItem>> GetAllFoods()
         {
             return await context.FoodItems.ToListAsync();
         }
 
-        public async Task<FoodItem> AddFoodAsync(FoodItem newFood)
+        public async Task<FoodItem> AddFood(FoodItem newFood) // does what it says on the tin mate
         {
             context.FoodItems.Add(newFood);
-            await context.SaveChangesAsync(); // Writes to SQL
+            await context.SaveChangesAsync();
             return newFood;
         }
 
-        public async Task<List<FoodLog>> GetLogsByDateAsync(int userId, DateTime date)
+        public async Task<List<FoodLog>> GetLogsByDate(int userId, DateTime date)
         {
-            return await context.FoodLogs
-                .Include(f => f.FoodItem)
-                .Where(f => f.UserID == userId && f.LogTime.Date == date.Date)
-                .ToListAsync();
+            // Get all the food logs to display in the the table in FoodLog.xaml:
+            return await context.FoodLogs.Include(f => f.FoodItem).Where(f => f.UserID == userId && f.LogTime.Date == date.Date).ToListAsync();
         }
 
-        public async Task<List<FoodLog>> GetWeeklyLogsAsync(int userId, DateTime startDate)
+        public async Task<List<FoodLog>> GetWeeklyLogs(int userId, DateTime startDate)
         {
            DateTime endDate = startDate.AddDays(7);
-            
-            return await context.FoodLogs
-                .Include(f => f.FoodItem)
-                .Where(f => f.UserID == userId && f.LogTime >= startDate && f.LogTime < endDate)
-                .ToListAsync();
+           // Fetches all of the user's logged foods within the selected date window including full food item details
+           return await context.FoodLogs.Include(f => f.FoodItem).Where(f => f.UserID == userId && f.LogTime >= startDate && f.LogTime < endDate).ToListAsync();
         }
 
-        public async Task<List<FoodLog>> LogFoodAsync(int userId, DateTime date, FoodLog entry)
+        public async Task<List<FoodLog>> LogFood(int userId, DateTime date, FoodLog entry)
         {
             context.FoodLogs.Add(entry);
-            await context.SaveChangesAsync(); // Writes to SQL
-            return await context.FoodLogs
-                .Include(f => f.FoodItem)
-                .Where(f => f.UserID == userId && f.LogTime.Date == date.Date)
-                .ToListAsync();
+            await context.SaveChangesAsync();
+            return await context.FoodLogs.Include(f => f.FoodItem).Where(f => f.UserID == userId && f.LogTime.Date == date.Date) .ToListAsync();
         }
     }
 }

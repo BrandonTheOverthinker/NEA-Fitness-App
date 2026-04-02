@@ -5,14 +5,14 @@ namespace FitnessAppBackend.Interfaces
 {
     public interface IAnalyticsRepository
     {
-        Task<decimal> GetTodayCaloriesAsync(int userId);
-        Task<decimal> GetWeeklyCaloriesAsync(int userId);
-        Task<decimal> Get7DayMacroAverageAsync(int userId, string macroType);
-        Task<MacronutrientTotals> GetTodayMacroTotalsAsync(int userId);
-        Task<FoodItem?> GetHighestCalorieFoodTodayAsync(int userId);
-        Task<FoodItem?> GetMostRecentFoodAsync(int userId);
-        Task<int> GetWeeklyWorkoutCountAsync(int userId);
-        Task<int> GetWeeklyWorkoutDurationAsync(int userId);
-        Task<GoalProgressSummary> GetGoalProgressAsync(int userId);
+        Task<decimal> GetTodayCalories(int userId);
+        Task<decimal> GetWeeklyCalories(int userId);
+        Task<decimal> Get7DayMacroAverage(int userId, string macroType);
+        Task<MacronutrientTotals> GetTodayMacroTotals(int userId);
+        Task<FoodItem?> GetHighestCalorieFoodToday(int userId);
+        Task<FoodItem?> GetMostRecentFood(int userId);
+        Task<int> GetWeeklyWorkoutCount(int userId);
+        Task<int> GetWeeklyWorkoutDuration(int userId);
+        Task<GoalProgressSummary> GetGoalProgress(int userId);
     }
 }

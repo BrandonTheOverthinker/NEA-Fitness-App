@@ -8,60 +8,74 @@ namespace FitnessAppBackend.Repositories
     public class AnalyticsRepository : IAnalyticsRepository
     {
         private readonly AppDbContext context;
-        public AnalyticsRepository(AppDbContext context) => this.context = context;
-
-        // Get total calories consumed today
-        public async Task<decimal> GetTodayCaloriesAsync(int userId)
+        public AnalyticsRepository(AppDbContext context)
         {
-            var logs = await context.FoodLogs
-                .Include(fl => fl.FoodItem)
-                .Where(fl => fl.UserID == userId && fl.LogTime.Date == DateTime.UtcNow.Date)
-                .ToListAsync();
+            this.context = context;
+        }
 
+        public async Task<decimal> GetTodayCalories(int userId)
+        {
+            // Fetch logged food by matching UserID with today's date. Then select calories and sum them up by multiplying food calories and quantity for each log:
+            var logs = await context.FoodLogs.Include(fl => fl.FoodItem) .Where(fl => fl.UserID == userId && fl.LogTime.Date == DateTime.UtcNow.Date).ToListAsync();
             return logs.Sum(log => log.FoodItem.Calories * log.Quantity);
         }
 
-        // Get total calories for the week
-        public async Task<decimal> GetWeeklyCaloriesAsync(int userId)
+        public async Task<decimal> GetWeeklyCalories(int userId)
         {
             DateTime startOfWeek = DateTime.UtcNow.Date.AddDays(-(int)DateTime.UtcNow.DayOfWeek);
-            var logs = await context.FoodLogs
-                .Include(fl => fl.FoodItem)
-                .Where(fl => fl.UserID == userId && fl.LogTime >= startOfWeek)
-                .ToListAsync();
+            // Same as above but with date filter for the whole week. Used to show the calorie trend in the analytics page:
+            var logs = await context.FoodLogs.Include(fl => fl.FoodItem).Where(fl => fl.UserID == userId && fl.LogTime >= startOfWeek).ToListAsync();
 
             return logs.Sum(log => log.FoodItem.Calories * log.Quantity);
         }
 
-        // Get 7-day rolling average for a specific macronutrient
-        public async Task<decimal> Get7DayMacroAverageAsync(int userId, string macroType)
+        public async Task<decimal> Get7DayMacroAverage(int userId, string macroType)
         {
             DateTime startDate = DateTime.UtcNow.Date.AddDays(-7);
-            var logs = await context.FoodLogs
-                .Include(fl => fl.FoodItem)
-                .Where(fl => fl.UserID == userId && fl.LogTime >= startDate)
-                .ToListAsync();
+            // Same again but for last 7 days instead of first day of the week, and with a switch statement to select which macro to sum up.
+            // Used to show the macro trends in the analytics page:
+            var logs = await context.FoodLogs.Include(fl => fl.FoodItem).Where(fl => fl.UserID == userId && fl.LogTime >= startDate).ToListAsync();
 
-            decimal total = macroType switch
+            decimal total = 0;
+            switch (macroType)
             {
-                "Protein" => logs.Sum(log => log.FoodItem.Protein * log.Quantity),
-                "Fat" => logs.Sum(log => log.FoodItem.Fat * log.Quantity),
-                "Carbs" => logs.Sum(log => log.FoodItem.Carbohydrates * log.Quantity),
-                "Calories" => logs.Sum(log => log.FoodItem.Calories * log.Quantity),
-                "Fibre" => logs.Sum(log => log.FoodItem.Fibre * log.Quantity),
-                _ => 0
-            };
+                case "Protein":
+                    foreach (var log in logs)
+                        total += log.FoodItem.Protein * log.Quantity;
+                    break;
 
+                case "Fat":
+                    foreach (var log in logs)
+                        total += log.FoodItem.Fat * log.Quantity;
+                    break;
+
+                case "Carbs":
+                    foreach (var log in logs)
+                        total += log.FoodItem.Carbohydrates * log.Quantity;
+                    break;
+
+                case "Calories":
+                    foreach (var log in logs)
+                        total += log.FoodItem.Calories * log.Quantity;
+                    break;
+
+                case "Fibre":
+                    foreach (var log in logs)
+                        total += log.FoodItem.Fibre * log.Quantity;
+                    break;
+
+                default:
+                    total = 0;
+                    break;
+            }
             return total / 7;
         }
 
-        // Get macronutrient totals for today
-        public async Task<MacronutrientTotals> GetTodayMacroTotalsAsync(int userId)
+        public async Task<MacronutrientTotals> GetTodayMacroTotals(int userId)
         {
-            var logs = await context.FoodLogs
-                .Include(fl => fl.FoodItem)
-                .Where(fl => fl.UserID == userId && fl.LogTime.Date == DateTime.UtcNow.Date)
-                .ToListAsync();
+            // Fetch current day's food logs and sum up each macro by multiplying the food's macro values with the quantity for each log.
+            // Used to show macro breakdown for current date in the analytics page:
+            var logs = await context.FoodLogs.Include(fl => fl.FoodItem).Where(fl => fl.UserID == userId && fl.LogTime.Date == DateTime.UtcNow.Date).ToListAsync();
 
             return new MacronutrientTotals
             {
@@ -73,57 +87,42 @@ namespace FitnessAppBackend.Repositories
             };
         }
 
-        // Get highest calorie food today
-        public async Task<FoodItem?> GetHighestCalorieFoodTodayAsync(int userId)
+        public async Task<FoodItem?> GetHighestCalorieFoodToday(int userId)
         {
-            var log = await context.FoodLogs
-                .Include(fl => fl.FoodItem)
-                .Where(fl => fl.UserID == userId && fl.LogTime.Date == DateTime.UtcNow.Date)
-                .OrderByDescending(fl => fl.FoodItem.Calories)
-                .FirstOrDefaultAsync();
-
+            // Fetch food logs, order by descending calories and use first item in list since it must have the highest calories.
+            var log = await context.FoodLogs.Include(fl => fl.FoodItem).Where(fl => fl.UserID == userId && fl.LogTime.Date == DateTime.UtcNow.Date)
+                .OrderByDescending(fl => fl.FoodItem.Calories).FirstOrDefaultAsync();
             return log?.FoodItem;
         }
 
-        // Get most recent food logged
-        public async Task<FoodItem?> GetMostRecentFoodAsync(int userId)
+        public async Task<FoodItem?> GetMostRecentFood(int userId)
         {
-            var log = await context.FoodLogs
-                .Include(fl => fl.FoodItem)
-                .Where(fl => fl.UserID == userId)
-                .OrderByDescending(fl => fl.LogTime)
-                .FirstOrDefaultAsync();
-
+            // Same as previous method but sort by date instead
+            var log = await context.FoodLogs.Include(fl => fl.FoodItem).Where(fl => fl.UserID == userId)
+                .OrderByDescending(fl => fl.LogTime).FirstOrDefaultAsync();
             return log?.FoodItem;
         }
 
-        // Get workouts this week
-        public async Task<int> GetWeeklyWorkoutCountAsync(int userId)
+        public async Task<int> GetWeeklyWorkoutCount(int userId)
         {
+            // Fetch workouts for the current week and count them
             DateTime startOfWeek = DateTime.UtcNow.Date.AddDays(-(int)DateTime.UtcNow.DayOfWeek);
-            return await context.Workouts
-                .Where(w => w.UserID == userId && w.WorkoutTime >= startOfWeek)
-                .CountAsync();
+            return await context.Workouts.Where(w => w.UserID == userId && w.WorkoutTime >= startOfWeek).CountAsync();
         }
 
-        // Get total workout duration this week (in minutes)
-        public async Task<int> GetWeeklyWorkoutDurationAsync(int userId)
+        public async Task<int> GetWeeklyWorkoutDuration(int userId)
         {
             DateTime startOfWeek = DateTime.UtcNow.Date.AddDays(-(int)DateTime.UtcNow.DayOfWeek);
-            var workouts = await context.Workouts
-                .Where(w => w.UserID == userId && w.WorkoutTime >= startOfWeek)
-                .ToListAsync();
+            var workouts = await context.Workouts.Where(w => w.UserID == userId && w.WorkoutTime >= startOfWeek).ToListAsync();
 
-            return workouts.Sum(w => w.WorkoutDurationS) / 60;
+            return workouts.Sum(w => w.WorkoutDurationS) / 60; // convert sum from seconds to minutes
         }
 
-        // Get user's goals progress
-        public async Task<GoalProgressSummary> GetGoalProgressAsync(int userId)
+        public async Task<GoalProgressSummary> GetGoalProgress(int userId)
         {
-            var goals = await context.Goals
-                .Include(g => g.User)
-                .Where(g => g.UserID == userId && !g.IsCompleted)
-                .ToListAsync();
+            // Fetch all active goals for the user and categorize them by type.
+            // Then calculate progress for weight goals by comparing current body weight with target weight and start weight.
+            var goals = await context.Goals.Include(g => g.User).Where(g => g.UserID == userId && !g.IsCompleted).ToListAsync();
 
             var weightGoals = goals.Where(g => g.GoalType == "Weight Loss" || g.GoalType == "Weight Gain").ToList();
             var exerciseGoals = goals.Where(g => g.GoalType == "Exercise").ToList();
@@ -154,7 +153,7 @@ namespace FitnessAppBackend.Repositories
         }
     }
 
-    // DTOs for analytics:
+    // Models used for analytics:
     public record MacronutrientTotals
     {
         public decimal Calories { get; set; }

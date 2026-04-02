@@ -11,81 +11,47 @@ namespace FitnessAppBackend.Controllers
     {
         private readonly IGoalRepository goalRepo;
         private readonly IUserRepository userRepo;
-        private readonly IWorkoutRepository workoutRepo;
     
         public GoalController(IGoalRepository goalRepo, IUserRepository userRepo)
         {
             this.goalRepo = goalRepo;
             this.userRepo = userRepo;
         }
+        public record CreateWeightGoalRequest(int userId, string description, DateTime deadline, decimal targetWeight, decimal startWeight);
+        public record CreateExerciseGoalRequest(int userId, string description, DateTime deadline, int exerciseId, decimal targetWeight,
+            int targetTime);
+        public record UserGoalResponse(int goalId, int userId, string goalType, string goalDescription, DateTime dateCreated,
+            bool completed, int daysUntilDeadline, WeightGoalData? weightGoalData, ExerciseGoalData? exerciseGoalData);
+        public record WeightGoalData(int wGoalID, decimal targetBW, decimal startBW);
+        public record ExerciseGoalData(int eGoalID, int exerciseID, string exerciseName, decimal targetWeight, int targetTime);
 
-        // DTOs
-        public record CreateWeightGoalRequest(
-            int UserId,
-            string Description,
-            DateTime Deadline,
-            decimal TargetWeight,
-            decimal StartWeight
-        );
-
-        public record CreateExerciseGoalRequest(
-            int UserId,
-            string Description,
-            DateTime Deadline,
-            int ExerciseId,
-            decimal TargetWeight,
-            int TargetTime
-        );
-
-        public record UserGoalResponse(
-            int GoalID,
-            int UserID,
-            string GoalType,
-            string GoalDescription,
-            DateTime DateCreated,
-            bool IsCompleted,
-            int DaysUntilDeadline,
-            WeightGoalData? WeightGoalData,
-            ExerciseGoalData? ExerciseGoalData
-        );
-
-        public record WeightGoalData(int WGoalID, decimal TargetBW, decimal StartBW);
-
-        public record ExerciseGoalData(int EGoalID, int ExerciseID, string ExerciseName, decimal TargetWeight, int TargetTime);
-
-        // POST api/goals/weight
         [HttpPost("weight")]
         public async Task<IActionResult> CreateWeightGoal([FromBody] CreateWeightGoalRequest request)
         {
-            try
+            try 
             {
-                if (request.TargetWeight <= 0 || request.StartWeight <= 0)
+                if (request.targetWeight <= 0 || request.startWeight <= 0)
                     return BadRequest("Target and start weights must be positive.");
 
-                var goal = await goalRepo.CreateWeightGoalAsync(
-                    request.UserId,
-                    request.Description,
-                    request.Deadline,
-                    request.TargetWeight,
-                    request.StartWeight
-                );
+                var goal = await goalRepo.CreateWeightGoal(request.userId, request.description, request.deadline, request.targetWeight, request.startWeight);
 
-                // Try to calculate and create nutrition goal, but do not fail the entire request if it errors.
-                try
+                try // I made it so the weight goal is still created if the nutrition goal creation errors.
                 {
-                    decimal calorieDeficit = CalculateCalorieDeficit(request.TargetWeight, request.StartWeight, request.Deadline);
-                    var user = await userRepo.GetUserByIdAsync(request.UserId);
+                    decimal calorieDeficit = CalculateCalorieDeficit(request.targetWeight, request.startWeight, request.deadline);
+                    var user = await userRepo.GetUserById(request.userId);
                     if (user != null)
                     {
                         decimal maintenanceGoal = user.MaintenanceGoal;
                         int targetCalories = Math.Max(1200, (int)(maintenanceGoal - Math.Abs(calorieDeficit)));
 
-                        var weightGoal = await goalRepo.GetWeightGoalByGoalIdAsync(goal.GoalID);
+                        var weightGoal = await goalRepo.GetWeightGoalByGoalId(goal.GoalID);
                         if (weightGoal != null)
                         {
                             try
                             {
-                                await goalRepo.CreateNutritionGoalAsync(
+
+
+                                await goalRepo.CreateNutritionGoal(
                                     weightGoal.WGoalID,
                                     targetCalories,
                                     targetCalories * 0.3m / 4, // 30% protein
@@ -98,14 +64,13 @@ namespace FitnessAppBackend.Controllers
                             }
                             catch (Exception exInner)
                             {
-                                // Log and continue — nutrition goal persistence failing should not break weight goal creation.
                                 Debug.WriteLine($"Failed to save NutritionGoal for WGoalID={weightGoal.WGoalID}: {exInner}");
                             }
                         }
                     }
                     else
                     {
-                        Debug.WriteLine($"User not found when creating nutrition goal for UserId={request.UserId}");
+                        Debug.WriteLine($"User not found when creating nutrition goal for UserId={request.userId}");
                     }
                 }
                 catch (Exception exCalc)
@@ -121,20 +86,18 @@ namespace FitnessAppBackend.Controllers
             }
         }
 
-        // POST api/goals/exercise
         [HttpPost("exercise")]
         public async Task<IActionResult> CreateExerciseGoal([FromBody] CreateExerciseGoalRequest request)
         {
             try
             {
-                var goal = await goalRepo.CreateExerciseGoalAsync(
-                    request.UserId,
-                    request.Description,
-                    request.Deadline,
-                    request.ExerciseId,
-                    request.TargetWeight,
-                    request.TargetTime
-                );
+                var goal = await goalRepo.CreateExerciseGoal(
+                    request.userId,
+                    request.description,
+                    request.deadline,
+                    request.exerciseId,
+                    request.targetWeight,
+                    request.targetTime);
 
                 return Ok(goal);
             }
@@ -144,13 +107,12 @@ namespace FitnessAppBackend.Controllers
             }
         }
 
-        // GET api/goals/user/{userId}
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetUserGoals(int userId)
         {
             try
             {
-                var goals = await goalRepo.GetUserGoalsAsync(userId);
+                var goals = await goalRepo.GetUserGoals(userId);
                 var responses = new List<UserGoalResponse>();
 
                 foreach (var goal in goals)
@@ -162,15 +124,20 @@ namespace FitnessAppBackend.Controllers
 
                     if (goal.GoalType == "Weight Loss" || goal.GoalType == "Weight Gain")
                     {
-                        var wg = await goalRepo.GetWeightGoalByGoalIdAsync(goal.GoalID);
+                        var wg = await goalRepo.GetWeightGoalByGoalId(goal.GoalID);
                         if (wg != null)
+                        {
                             weightData = new WeightGoalData(wg.WGoalID, wg.TargetBW, wg.StartBW);
+                        }
                     }
                     else if (goal.GoalType == "Exercise")
                     {
-                        var eg = await goalRepo.GetExerciseGoalByGoalIdAsync(goal.GoalID);
+
+                        var eg = await goalRepo.GetExerciseGoalByGoalId(goal.GoalID);
                         if (eg != null)
+                        {
                             exerciseData = new ExerciseGoalData(eg.EGoalID, eg.ExerciseID, eg.Exercise?.ExerciseName ?? "", eg.TargetWeight, eg.TargetTime);
+                        }
                     }
 
                     responses.Add(new UserGoalResponse(
@@ -194,13 +161,12 @@ namespace FitnessAppBackend.Controllers
             }
         }
 
-        // PATCH api/goals/{goalId}/complete
         [HttpPatch("{goalId}/complete")]
         public async Task<IActionResult> CompleteGoal(int goalId)
         {
             try
             {
-                await goalRepo.CompleteGoalAsync(goalId);
+                await goalRepo.CompleteGoal(goalId);
                 return Ok(new { message = "Goal marked as completed" });
             }
             catch (Exception ex)
@@ -209,14 +175,12 @@ namespace FitnessAppBackend.Controllers
             }
         }
 
-        // DELETE api/goal/{goalId}
-        // Remove a user goal and any related rows:
         [HttpDelete("{goalId}")]
         public async Task<IActionResult> DeleteGoal(int goalId)
         {
             try
             {
-                await goalRepo.DeleteGoalAsync(goalId);
+                await goalRepo.DeleteGoal(goalId);
                 return Ok();
             }
             catch (Exception ex)
@@ -231,18 +195,23 @@ namespace FitnessAppBackend.Controllers
             {
                 decimal weightDifference = Math.Abs(targetWeight - startWeight);
                 int days = (int)(deadline - DateTime.UtcNow).TotalDays;
-                
+
                 if (days <= 0)
+                {
                     days = 30;
+                }
 
                 decimal weeksRemaining = days / 7m;
+
                 if (weeksRemaining <= 0)
+                {
                     weeksRemaining = 1;
+                }
 
                 decimal weeklyRate = weightDifference / weeksRemaining;
-
-                // 1kg = 7700 calories, so 0.5kg/week = 3850 cal/week deficit
                 return weeklyRate * 7700 / 7;
+
+
             }
             catch
             {

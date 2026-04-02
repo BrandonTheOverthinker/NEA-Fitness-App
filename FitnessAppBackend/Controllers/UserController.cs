@@ -1,5 +1,4 @@
 using FitnessAppBackend.Interfaces;
-using FitnessAppBackend.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessAppBackend.Controllers
@@ -9,15 +8,17 @@ namespace FitnessAppBackend.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserRepository userRepo;
-        public UserController(IUserRepository userRepo) => this.userRepo = userRepo;
 
+        public UserController(IUserRepository userRepo)
+        {
+            this.userRepo = userRepo;
+        }
         public record UpdateUserRequest(DateOnly UserDOB, decimal BodyWeight, decimal Height, string Gender, string ActivityLevel, decimal MaintenanceGoal);
 
-        // GET api/user/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUser(int id)
         {
-            var user = await userRepo.GetUserByIdAsync(id);
+            var user = await userRepo.GetUserById(id);
             if (user == null) return NotFound();
             return Ok(new
             {
@@ -32,15 +33,13 @@ namespace FitnessAppBackend.Controllers
             });
         }
 
-        // PUT api/user/{id}
-        // Update profile fields without requiring password or PasswordHash in request body.
+        // Update profile fields without requiring password or PasswordHash in request body:
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserRequest request)
         {
-            var existing = await userRepo.GetUserByIdAsync(id);
+            var existing = await userRepo.GetUserById(id);
             if (existing == null) return NotFound();
 
-            // Map only mutable fields
             existing.UserDOB = request.UserDOB;
             existing.BodyWeight = request.BodyWeight;
             existing.Height = request.Height;
@@ -48,8 +47,7 @@ namespace FitnessAppBackend.Controllers
             existing.ActivityLevel = request.ActivityLevel;
             existing.MaintenanceGoal = request.MaintenanceGoal;
 
-            await userRepo.UpdateUserAsync(id, existing);
-
+            await userRepo.UpdateUser(id, existing);
             return Ok(new { Message = "Profile updated" });
         }
     }

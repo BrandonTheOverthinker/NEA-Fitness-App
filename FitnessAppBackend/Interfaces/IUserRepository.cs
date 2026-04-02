@@ -4,11 +4,10 @@ namespace FitnessAppBackend.Interfaces
 {
     public interface IUserRepository
     {
-        Task<User?> GetUserByUsernameAsync(string username);
-        Task<User?> GetUserByIdAsync(int userId);
-        Task CreateUserAsync(User user);
-        Task UpdateUserAsync(int userId, User user);
-        Task<bool> UserExistsAsync(string username);
-        Task<int> GetUserCountAsync();
+        Task<User?> GetUserByUsername(string username);
+        Task CreateUser(User user);
+        Task<User?> GetUserById(int userId);
+        Task UpdateUser(int userId, User user);
+        Task<int> GetUserCount();
     }
 }

@@ -23,7 +23,6 @@ namespace FitnessAppBackend.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request) // Get info from RegisterRequest and map to User model for DB insertion
         {
-            // Map new properties to the new User Table:
             var newUser = new User
             {
                 UserID = request.UserID,
@@ -39,7 +38,7 @@ namespace FitnessAppBackend.Controllers
             newUser.PasswordHash = hasher.HashPassword(newUser, request.Password);
 
             // Save by using the Repository:
-            await userRepo.CreateUserAsync(newUser);
+            await userRepo.CreateUser(newUser);
             return Ok(new
             {
                 newUser.UserID,
@@ -54,7 +53,7 @@ namespace FitnessAppBackend.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] RegisterRequest request) // Get info from RegisterRequest and validate against DB records for authentication
         {
-            var user = await userRepo.GetUserByUsernameAsync(request.UserName);
+            var user = await userRepo.GetUserByUsername(request.UserName);
             // Validation:
             if (user == null)
                 return Unauthorized("Invalid Username.");
@@ -74,7 +73,7 @@ namespace FitnessAppBackend.Controllers
         [HttpGet("fitness-app-db")]
         public async Task<IActionResult> CreateDb()
         {
-            var userCount = await userRepo.GetUserCountAsync();
+            var userCount = await userRepo.GetUserCount();
             return Ok($"Connected. Users in DB: {userCount}");
         }
     }

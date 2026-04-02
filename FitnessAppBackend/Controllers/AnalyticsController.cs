@@ -11,19 +11,18 @@ namespace FitnessAppBackend.Controllers
 
         public AnalyticsController(IAnalyticsRepository analyticsRepo) => this.analyticsRepo = analyticsRepo;
 
-        // GET api/analytics/user/{userId}/summary
         [HttpGet("user/{userId}/summary")]
         public async Task<IActionResult> GetAnalyticsSummary(int userId)
         {
             try
             {
-                var todayCalories = await analyticsRepo.GetTodayCaloriesAsync(userId);
-                var weeklyCalories = await analyticsRepo.GetWeeklyCaloriesAsync(userId);
-                var weeklyWorkouts = await analyticsRepo.GetWeeklyWorkoutCountAsync(userId);
-                var weeklyDuration = await analyticsRepo.GetWeeklyWorkoutDurationAsync(userId);
-                var highestFood = await analyticsRepo.GetHighestCalorieFoodTodayAsync(userId);
-                var recentFood = await analyticsRepo.GetMostRecentFoodAsync(userId);
-                var goalProgress = await analyticsRepo.GetGoalProgressAsync(userId);
+                var todayCalories = await analyticsRepo.GetTodayCalories(userId);
+                var weeklyCalories = await analyticsRepo.GetWeeklyCalories(userId);
+                var weeklyWorkouts = await analyticsRepo.GetWeeklyWorkoutCount(userId);
+                var weeklyDuration = await analyticsRepo.GetWeeklyWorkoutDuration(userId);
+                var highestFood = await analyticsRepo.GetHighestCalorieFoodToday(userId);
+                var recentFood = await analyticsRepo.GetMostRecentFood(userId);
+                var goalProgress = await analyticsRepo.GetGoalProgress(userId);
 
                 return Ok(new
                 {
@@ -42,18 +41,17 @@ namespace FitnessAppBackend.Controllers
             }
         }
 
-        // GET api/analytics/user/{userId}/macros
         [HttpGet("user/{userId}/macros")]
         public async Task<IActionResult> GetMacroAnalytics(int userId)
         {
             try
             {
-                var todayMacros = await analyticsRepo.GetTodayMacroTotalsAsync(userId);
-                var proteinAvg = await analyticsRepo.Get7DayMacroAverageAsync(userId, "Protein");
-                var fatAvg = await analyticsRepo.Get7DayMacroAverageAsync(userId, "Fat");
-                var carbsAvg = await analyticsRepo.Get7DayMacroAverageAsync(userId, "Carbs");
-                var caloriesAvg = await analyticsRepo.Get7DayMacroAverageAsync(userId, "Calories");
-                var fibreAvg = await analyticsRepo.Get7DayMacroAverageAsync(userId, "Fibre");
+                var todayMacros = await analyticsRepo.GetTodayMacroTotals(userId);
+                var proteinAvg = await analyticsRepo.Get7DayMacroAverage(userId, "Protein");
+                var fatAvg = await analyticsRepo.Get7DayMacroAverage(userId, "Fat");
+                var carbsAvg = await analyticsRepo.Get7DayMacroAverage(userId, "Carbs");
+                var caloriesAvg = await analyticsRepo.Get7DayMacroAverage(userId, "Calories");
+                var fibreAvg = await analyticsRepo.Get7DayMacroAverage(userId, "Fibre");
 
                 return Ok(new
                 {

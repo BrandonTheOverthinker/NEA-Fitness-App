@@ -8,15 +8,16 @@ namespace FitnessAppBackend.Repositories
     public class GoalRepository : IGoalRepository
     {
         private readonly AppDbContext context;
-        public GoalRepository(AppDbContext context) => this.context = context;
-
-        // Enforce only one active weight goal per user:
-        public async Task<UserGoal> CreateWeightGoalAsync(int userId, string description, DateTime deadline, decimal targetWeight, decimal startWeight)
+        public GoalRepository(AppDbContext context)
         {
-            // Mark any existing active weight goal as completed (keep history):
-            var existing = await context.Goals
-                .Where(g => g.UserID == userId && (g.GoalType == "Weight Loss" || g.GoalType == "Weight Gain") && !g.IsCompleted)
-                .ToListAsync();
+            this.context = context;
+        }
+
+        // Only allow one active weight goal per user since weight gain and loss goal at the same time makes no sense
+        public async Task<UserGoal> CreateWeightGoal(int userId, string description, DateTime deadline, decimal targetWeight, decimal startWeight)
+        {
+            // Keep record of the goal for analytics:
+            var existing = await context.Goals.Where(g => g.UserID == userId && (g.GoalType == "Weight Loss" || g.GoalType == "Weight Gain") && !g.IsCompleted).ToListAsync();
 
             if (existing.Any())
             {
@@ -28,7 +29,7 @@ namespace FitnessAppBackend.Repositories
             var userGoal = new UserGoal
             {
                 UserID = userId,
-                GoalType = targetWeight < startWeight ? "Weight Loss" : "Weight Gain",
+                GoalType = targetWeight < startWeight ? "Weight Loss" : "Weight Gain", // 1-line if/else
                 GoalDescription = description,
                 DateCreated = DateTime.UtcNow,
                 Deadline = deadline,
@@ -51,7 +52,7 @@ namespace FitnessAppBackend.Repositories
             return userGoal;
         }
 
-        public async Task<UserGoal> CreateExerciseGoalAsync(int userId, string description, DateTime deadline, int exerciseId, decimal targetWeight, int targetTime)
+        public async Task<UserGoal> CreateExerciseGoal(int userId, string description, DateTime deadline, int exerciseId, decimal targetWeight, int targetTime)
         {
             var userGoal = new UserGoal
             {
@@ -80,18 +81,13 @@ namespace FitnessAppBackend.Repositories
             return userGoal;
         }
 
-        public async Task<List<UserGoal>> GetUserGoalsAsync(int userId) =>
-            await context.Goals
-                .Where(g => g.UserID == userId)
-                .OrderByDescending(g => g.DateCreated)
-                .ToListAsync();
+        public async Task<List<UserGoal>> GetUserGoals(int userId) =>
+            await context.Goals.Where(g => g.UserID == userId).OrderByDescending(g => g.DateCreated).ToListAsync();
 
-        public async Task<UserGoal?> GetGoalByIdAsync(int goalId) =>
-            await context.Goals
-                .Include(g => g.User)
-                .FirstOrDefaultAsync(g => g.GoalID == goalId);
+        public async Task<UserGoal?> GetGoalById(int goalId) =>
+            await context.Goals.Include(g => g.User).FirstOrDefaultAsync(g => g.GoalID == goalId);
 
-        public async Task CompleteGoalAsync(int goalId)
+        public async Task CompleteGoal(int goalId)
         {
             var goal = await context.Goals.FindAsync(goalId);
             if (goal != null)
@@ -101,16 +97,16 @@ namespace FitnessAppBackend.Repositories
             }
         }
 
-        // Delete goal and related child rows (weight/exercise/nutrition):
-        public async Task DeleteGoalAsync(int goalId)
+        public async Task DeleteGoal(int goalId)
         {
             var weight = await context.WeightGoals.FirstOrDefaultAsync(w => w.GoalID == goalId);
             if (weight != null)
             {
-                // Delete related nutrition if exists:
                 var nutrition = await context.NutritionGoals.FirstOrDefaultAsync(n => n.WGoalID == weight.WGoalID);
                 if (nutrition != null)
+                {
                     context.NutritionGoals.Remove(nutrition);
+                }
 
                 context.WeightGoals.Remove(weight);
             }
@@ -126,7 +122,7 @@ namespace FitnessAppBackend.Repositories
             await context.SaveChangesAsync();
         }
 
-        public async Task<NutritionGoal> CreateNutritionGoalAsync(int weightGoalId, int calorieGoal, decimal proteinGoal, decimal fatGoal, decimal satFatGoal, decimal carbsGoal, decimal sugarGoal, decimal fibreGoal)
+        public async Task<NutritionGoal> CreateNutritionGoal(int weightGoalId, int calorieGoal, decimal proteinGoal, decimal fatGoal, decimal satFatGoal, decimal carbsGoal, decimal sugarGoal, decimal fibreGoal)
         {
             var nutritionGoal = new NutritionGoal
             {
@@ -146,11 +142,11 @@ namespace FitnessAppBackend.Repositories
             return nutritionGoal;
         }
 
-        public async Task<WeightGoal?> GetWeightGoalByGoalIdAsync(int goalId) =>
+        public async Task<WeightGoal?> GetWeightGoalByGoalId(int goalId) =>
             await context.WeightGoals
                 .FirstOrDefaultAsync(wg => wg.GoalID == goalId);
 
-        public async Task<ExerciseGoal?> GetExerciseGoalByGoalIdAsync(int goalId) =>
+        public async Task<ExerciseGoal?> GetExerciseGoalByGoalId(int goalId) =>
             await context.ExerciseGoals
                 .Include(eg => eg.Exercise)
                 .FirstOrDefaultAsync(eg => eg.GoalID == goalId);
